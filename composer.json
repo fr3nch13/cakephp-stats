@@ -1,0 +1,100 @@
+{
+    "name": "sis-plugins/stats",
+    "description": "Statistics plugin for SIS Projects",
+    "homepage": "https://dfir-bedlam.ocio.nih.gov/sis-plugins/stats",
+    "type": "cakephp-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Brian French",
+            "email": "brian.french@nih.gov",
+            "role": "Main Developer",
+            "homepage": "https://dfir-bedlam.ocio.nih.gov/frenchbm"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packagist.org"
+        },
+        {
+            "type": "composer",
+            "url": "https://satis.ocio.nih.gov",
+            "options": {
+                "ssl": {
+                    "allow_self_signed": true,
+                    "verify_peer": false
+                }
+            }
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^8.0",
+        "cakephp/cakephp": "~4.4.14"
+    },
+    "require-dev": {
+        "fr3nch13/pushover-bash": "~1.0",
+        "fr3nch13/cakephp-pta": "~2.4.3",
+        "fr3nch13/cakephp-utilities": "~0.0.8",
+        "sis-plugins/core": "dev-master as 2.6.2.1",
+        "sis-plugins/notifications": "dev-master as 2.6.2.1",
+        "sis-plugins/orgs": "dev-master as 2.6.2.1",
+        "sis-plugins/users": "dev-master as 2.6.2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sis\\Stats\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\": "./vendor/fr3nch13/cakephp-pta/tests/test_app/src",
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests",
+            "Sis\\Core\\Test\\Fixture\\": "./vendor/sis-plugins/core/tests/Fixture",
+            "Sis\\Orgs\\Test\\Fixture\\": "vendor/sis-plugins/orgs/tests/Fixture",
+            "Sis\\Stats\\Test\\": "tests",
+            "Sis\\Stats\\Test\\Fixture\\": "tests/Fixture"
+        }
+    },
+    "scripts": {
+        "pushover": "./vendor/bin/pushover.sh",
+        "pushover-test": "@pushover -T Sis/Stats: Unit Test -m Test complete",
+        "pushover-done": "@pushover -T Sis/Stats: Composer done -m Composer done -p 2",
+        "pushover-gitlab": "@pushover -T Sis/Stats: Gitlab done -m Gitlab done -p 2",
+        "ci": [
+            "@check",
+            "@coverage-text",
+            "@pushover -m Sis/Stats CI done -p 1"
+        ],
+        "check": [
+            "@test",
+            "@cs-check",
+            "@phpstan"
+        ],
+        "fix": [
+            "@cs-fix",
+            "@cs-check"
+        ],
+        "cs-check": "php -d memory_limit=-1 ./vendor/bin/phpcs --colors -p -s --extensions=php ./src ./templates ./tests",
+        "cs-fix": "php -d memory_limit=-1 ./vendor/bin/phpcbf --colors --extensions=php ./src ./templates ./tests",
+        "phpstan": "php -d memory_limit=-1 ./vendor/bin/phpstan --no-progress -vvv",
+        "test": "php -d memory_limit=-1 ./vendor/bin/phpunit --colors=always --testdox",
+        "test-ci": "php -d memory_limit=-1 -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-text --colors=never --coverage-cobertura=coverage.cobertura.xml --log-junit unitreport.xml --testdox",
+        "coverage": "php -d memory_limit=-1 -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-html coverage --testdox",
+        "coverage-clover": "php -d memory_limit=-1 -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover=coverage.xml --testdox",
+        "coverage-text": "php -d memory_limit=-1 -d xdebug.mode=coverage ./vendor/bin/phpunit --coverage-text --colors=never --testdox",
+        "coverage-artifact": "php -d memory_limit=-1 -d xdebug.mode=coverage vendor/bin/phpunit --coverage-text --colors=never --coverage-cobertura=coverage.cobertura.xml --testdox"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "cakephp/plugin-installer": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "_comments": {
+            "composer update": "COMPOSER_ROOT_VERSION=2.6.2 composer update"
+        }
+    }
+}

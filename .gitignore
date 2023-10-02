@@ -1,0 +1,29 @@
+/vendor/*
+!/vendor/empty
+!*.gitkeep
+*default.lock
+/tests/test_app/logs/*
+!/tests/test_app/logs/*.gitkeep
+/tests/test_app/tmp/*
+!/tests/test_app/tmp/*.gitkeep
+/tests/test_app/config/.env
+/tests/Fixture/*Bak.php
+.phpunit.result.cache
+.composer-update
+coverage/
+coverage.xml
+unitreport.xml
+coverage.cobertura.xml
+
+# For the CI building to cut down on downloading traffic #
+/.composercache/*
+!/.composercache/empty
+
+# Allow builds on multiple php versions
+composer.lock
+
+/.vscode
+tests/.env
+
+# Pushover config and secrets
+/pushover-config
