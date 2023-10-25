@@ -4,6 +4,10 @@
 
     <rule ref="CakePHP"/>
 
+    <file>src/</file>
+    <file>tests/</file>
+    <file>templates/</file>
+
     <!-- Allow TODO tags -->
     <rule ref="Generic.Commenting.Todo.CommentFound">
         <severity>0</severity>

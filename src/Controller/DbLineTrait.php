@@ -4,9 +4,11 @@ declare(strict_types=1);
 /**
  * Used by controllers for the common methods.
  */
-namespace Sis\Stats\Controller;
+namespace Fr3nch13\Stats\Controller;
 
-use Cake\I18n\FrozenTime;
+use Cake\Http\Response;
+use Cake\I18n\DateTime;
+use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
 /**
@@ -17,33 +19,31 @@ trait DbLineTrait
     /**
      * Performs the common DB Linegraph functions.
      *
-     * @param \Sis\Core\Model\Table\Table $Table The Model Table.
+     * @param \Cake\ORM\Table $Table The Model Table.
      * @param array<string> $keys The keys to lookup.
      * @param mixed|null $range Go back x number of stats.
-     * @param null|string $timeperiod The Interval for the line graph
-     * @param null|string $title The title to use, if needed.
-     * @param \Cake\I18n\FrozenTime|null $start The time that we want to start. Defaults to now.
+     * @param string|null $timeperiod The Interval for the line graph
+     * @param string|null $title The title to use, if needed.
+     * @param \Cake\I18n\DateTime|null $start The time that we want to start. Defaults to now.
      * @param array<int> $ids The specific ids that we want to combine.
      * @return \Cake\Http\Response|null
      */
     public function dbLineCommon(
-        \Sis\Core\Model\Table\Table $Table,
+        Table $Table,
         array $keys,
-        $range = null,
+        mixed $range = null,
         ?string $timeperiod = null,
         ?string $title = null,
-        ?FrozenTime $start = null,
+        ?DateTime $start = null,
         array $ids = []
-    ): ?\Cake\Http\Response {
+    ): ?Response {
         // redirect to the frontend url is correct.
         if (!$range || !$timeperiod) {
             return $this->redirect(['action' => $this->getRequest()->getParam('action'), 7, 'day']);
         }
 
-        // make phpstan happy
-        /** @var \Sis\Stats\Model\Table\TestsTable $Table */
         if (!$Table->behaviors()->has('Stats')) {
-            $Table->addBehavior('Sis/Stats.Stats');
+            $Table->addBehavior('Fr3nch13/Stats.Stats');
         }
 
         $timeperiods = $Table->statsGetTimeperiods();
@@ -52,8 +52,9 @@ trait DbLineTrait
         }
 
         if (!$start) {
-            $start = new FrozenTime();
+            $start = new DateTime();
         }
+
         $oldKeys = $keys;
         // multiple Ids that we need to combine.
         if ($ids) {
@@ -68,7 +69,7 @@ trait DbLineTrait
             }
         }
 
-        $stats = $Table->statsGetEntitiesCounts($keys, $start, (int)$range, $timeperiod);
+        $stats = $Table->statsGetobjectsCounts($keys, $start, (int)$range, $timeperiod);
 
         // try to combine the counts.
         if ($ids) {
@@ -84,7 +85,6 @@ trait DbLineTrait
                     $combinedKey = str_replace('__id__', '0', $oldKey);
                     $myKeys[$myKey] = $combinedKey;
                 }
-                $myStats = [];
                 foreach ($myKeys as $myKey => $combinedKey) {
                     if (isset($stats[$myKey])) {
                         // add the entity to the combined stats

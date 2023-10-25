@@ -5,9 +5,10 @@ declare(strict_types=1);
  *  StatsCountTest
  */
 
-namespace Sis\Stats\Test\TestCase\Model\Entity;
+namespace Fr3nch13\Stats\Test\TestCase\Model\Entity;
 
 use Cake\TestSuite\TestCase;
+use Fr3nch13\Stats\Model\Entity\StatsCount;
 
 /**
  *  StatsCount Test
@@ -19,7 +20,7 @@ class StatsCountTest extends TestCase
     /**
      * The table object.
      *
-     * @var \Sis\Stats\Model\Table\StatsCountsTable
+     * @var \Fr3nch13\Stats\Model\Table\StatsCountsTable
      */
     public $StatsCounts;
 
@@ -31,8 +32,8 @@ class StatsCountTest extends TestCase
     public function getFixtures(): array
     {
         return [
-            'plugin.Sis/Stats.StatsEntities',
-            'plugin.Sis/Stats.StatsCounts',
+            'plugin.Fr3nch13/Stats.StatsObjects',
+            'plugin.Fr3nch13/Stats.StatsCounts',
         ];
     }
 
@@ -47,8 +48,8 @@ class StatsCountTest extends TestCase
         $Locator = $this->getTableLocator();
         $Locator->allowFallbackClass(false);
 
-        /** @var \Sis\Stats\Model\Table\StatsCountsTable $StatsCounts */
-        $StatsCounts = $Locator->get('Sis/Stats.StatsCounts');
+        /** @var \Fr3nch13\Stats\Model\Table\StatsCountsTable $StatsCounts */
+        $StatsCounts = $Locator->get('Fr3nch13/Stats.StatsCounts');
         $this->StatsCounts = $StatsCounts;
     }
 
@@ -57,64 +58,66 @@ class StatsCountTest extends TestCase
      */
     public function testGetTimestamp(): void
     {
-        // currently right
-        $stats_count = $this->StatsCounts->get(15);
-        $this->assertInstanceOf(\Sis\Stats\Model\Entity\StatsCount::class, $stats_count);
-        $this->assertSame('day', $stats_count->get('time_period'));
-        $this->assertSame(20191201, $stats_count->get('time_stamp'));
-        $this->assertSame(2019, $stats_count->get('timestamp')->year);
-        $this->assertSame(12, $stats_count->get('timestamp')->month);
-        $this->assertSame(1, $stats_count->get('timestamp')->day);
-        $this->assertSame('12/01/2019', $stats_count->get('timestamp')->i18nFormat('MM/dd/yyyy'));
+        // Hour
+        $now = new \Cake\I18n\DateTime();
+        $stats_count = $this->StatsCounts->get(1);
+        $this->assertInstanceOf(StatsCount::class, $stats_count);
+        $this->assertSame('hour', $stats_count->time_period);
+        $this->assertSame((int)$now->format('YmdH'), $stats_count->time_stamp);
+        $this->assertSame($now->year, $stats_count->timestamp->year);
+        $this->assertSame($now->month, $stats_count->timestamp->month);
+        $this->assertSame($now->weekOfYear, $stats_count->timestamp->weekOfYear);
+        $this->assertSame($now->day, $stats_count->timestamp->day);
+        $this->assertSame($now->hour, $stats_count->timestamp->hour);
+        $this->assertSame($now->format('m/d/Y'), $stats_count->timestamp->i18nFormat('MM/dd/yyyy'));
 
-        // currently right
-        $stats_count = $this->StatsCounts->get(14);
-        $this->assertInstanceOf(\Sis\Stats\Model\Entity\StatsCount::class, $stats_count);
-        $this->assertSame('day', $stats_count->get('time_period'));
-        $this->assertSame(20191001, $stats_count->get('time_stamp'));
-        $this->assertSame(2019, $stats_count->get('timestamp')->year);
-        $this->assertSame(10, $stats_count->get('timestamp')->month);
-        $this->assertSame(1, $stats_count->get('timestamp')->day);
-        $this->assertSame('10/01/2019', $stats_count->get('timestamp')->i18nFormat('MM/dd/yyyy'));
+        // Day
+        $now = new \Cake\I18n\DateTime();
+        $stats_count = $this->StatsCounts->get(2);
+        $this->assertInstanceOf(StatsCount::class, $stats_count);
+        $this->assertSame('day', $stats_count->time_period);
+        $this->assertSame((int)$now->format('Ymd'), $stats_count->time_stamp);
+        $this->assertSame($now->year, $stats_count->timestamp->year);
+        $this->assertSame($now->month, $stats_count->timestamp->month);
+        $this->assertSame($now->weekOfYear, $stats_count->timestamp->weekOfYear);
+        $this->assertSame($now->day, $stats_count->timestamp->day);
+        $this->assertSame(0, $stats_count->timestamp->hour);
+        $this->assertSame($now->format('m/d/Y'), $stats_count->timestamp->i18nFormat('MM/dd/yyyy'));
 
-        // currently wrong
-        $stats_count = $this->StatsCounts->get(13);
-        $this->assertInstanceOf(\Sis\Stats\Model\Entity\StatsCount::class, $stats_count);
-        $this->assertSame('day', $stats_count->get('time_period'));
-        $this->assertSame(20190620, $stats_count->get('time_stamp'));
-        $this->assertSame(2019, $stats_count->get('timestamp')->year);
-        $this->assertSame(6, $stats_count->get('timestamp')->month);
-        $this->assertSame(20, $stats_count->get('timestamp')->day);
-        $this->assertSame('06/20/2019', $stats_count->get('timestamp')->i18nFormat('MM/dd/yyyy'));
-
-        // wrong
-        $stats_count = $this->StatsCounts->get(16);
-        $this->assertInstanceOf(\Sis\Stats\Model\Entity\StatsCount::class, $stats_count);
-        $this->assertSame('day', $stats_count->get('time_period'));
-        $this->assertSame(20190220, $stats_count->get('time_stamp'));
-        $this->assertSame(2019, $stats_count->get('timestamp')->year);
-        $this->assertSame(2, $stats_count->get('timestamp')->month);
-        $this->assertSame(20, $stats_count->get('timestamp')->day);
-        $this->assertSame('02/20/2019', $stats_count->get('timestamp')->i18nFormat('MM/dd/yyyy'));
-
-        // wrong
-        $stats_count = $this->StatsCounts->get(17);
-        $this->assertInstanceOf(\Sis\Stats\Model\Entity\StatsCount::class, $stats_count);
-        $this->assertSame('day', $stats_count->get('time_period'));
-        $this->assertSame(20190905, $stats_count->get('time_stamp'));
-        $this->assertSame(2019, $stats_count->get('timestamp')->year);
-        $this->assertSame(9, $stats_count->get('timestamp')->month);
-        $this->assertSame(5, $stats_count->get('timestamp')->day);
-        $this->assertSame('09/05/2019', $stats_count->get('timestamp')->i18nFormat('MM/dd/yyyy'));
-
-        // week
+        // Week
+        $now = new \Cake\I18n\DateTime();
         $stats_count = $this->StatsCounts->get(3);
-        $this->assertInstanceOf(\Sis\Stats\Model\Entity\StatsCount::class, $stats_count);
-        $this->assertSame('week', $stats_count->get('time_period'));
-        $this->assertSame(201925, $stats_count->get('time_stamp'));
-        $this->assertSame(2019, $stats_count->get('timestamp')->year);
-        $this->assertSame(6, $stats_count->get('timestamp')->month);
-        $this->assertSame(17, $stats_count->get('timestamp')->day);
-        $this->assertSame('06/17/2019', $stats_count->get('timestamp')->i18nFormat('MM/dd/yyyy'));
+        $this->assertInstanceOf(StatsCount::class, $stats_count);
+        $this->assertSame('week', $stats_count->time_period);
+        $this->assertSame((int)$now->format('YW'), $stats_count->time_stamp);
+        $this->assertSame($now->year, $stats_count->timestamp->year);
+        $this->assertSame($now->month, $stats_count->timestamp->month);
+        $this->assertSame($now->weekOfYear, $stats_count->timestamp->weekOfYear);
+        $this->assertSame(1, $stats_count->timestamp->dayOfWeek);
+        $this->assertSame(0, $stats_count->timestamp->hour);
+
+        // Month
+        $now = new \Cake\I18n\DateTime();
+        $stats_count = $this->StatsCounts->get(4);
+        $this->assertInstanceOf(StatsCount::class, $stats_count);
+        $this->assertSame('month', $stats_count->time_period);
+        $this->assertSame((int)$now->format('Ym'), $stats_count->time_stamp);
+        $this->assertSame($now->year, $stats_count->timestamp->year);
+        $this->assertSame($now->month, $stats_count->timestamp->month);
+        $this->assertSame(1, $stats_count->timestamp->day);
+        $this->assertSame(0, $stats_count->timestamp->hour);
+        $this->assertSame($now->format('m/01/Y'), $stats_count->timestamp->i18nFormat('MM/dd/yyyy'));
+
+        // Year
+        $now = new \Cake\I18n\DateTime();
+        $stats_count = $this->StatsCounts->get(5);
+        $this->assertInstanceOf(StatsCount::class, $stats_count);
+        $this->assertSame('year', $stats_count->time_period);
+        $this->assertSame((int)$now->format('Y'), $stats_count->time_stamp);
+        $this->assertSame($now->year, $stats_count->timestamp->year);
+        $this->assertSame(1, $stats_count->timestamp->month);
+        $this->assertSame(1, $stats_count->timestamp->day);
+        $this->assertSame(0, $stats_count->timestamp->hour);
+        $this->assertSame($now->format('01/01/Y'), $stats_count->timestamp->i18nFormat('MM/dd/yyyy'));
     }
 }

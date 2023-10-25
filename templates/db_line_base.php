@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @var \Sis\Core\View\BaseView $this
+ * @var \Fr3nch13\Stats\View\StatsView $this
  */
 
 if (!$this->get('title')) {
@@ -24,7 +24,7 @@ if (!$this->get('timeperiodPlural')) {
 if (!$this->get('range')) {
     $this->set('range', 30);
 }
-echo $this->element('Sis/Core.dashboard/block-line', [
+echo $this->element('block-line', [
     'title' => $this->get('title'),
     'stats' => $this->get('stats'),
     'timeperiod' => $this->get('timeperiod'),

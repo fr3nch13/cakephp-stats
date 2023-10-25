@@ -1,29 +1,59 @@
+# CakePHP specific files #
+##########################
+/config/app_local.php
+/config/.env
+/logs/*
+/tmp/*
 /vendor/*
-!/vendor/empty
+/webroot/assets/*
 !*.gitkeep
-*default.lock
-/tests/test_app/logs/*
-!/tests/test_app/logs/*.gitkeep
-/tests/test_app/tmp/*
-!/tests/test_app/tmp/*.gitkeep
-/tests/test_app/config/.env
-/tests/Fixture/*Bak.php
-.phpunit.result.cache
-.composer-update
-coverage/
-coverage.xml
-unitreport.xml
-coverage.cobertura.xml
 
-# For the CI building to cut down on downloading traffic #
-/.composercache/*
-!/.composercache/empty
+# OS generated files #
+######################
+.DS_Store
+*/.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+# Icon must end with two \r
+Icon
 
-# Allow builds on multiple php versions
-composer.lock
+ehthumbs.db
+Thumbs.db
+.directory
 
-/.vscode
-tests/.env
-
-# Pushover config and secrets
-/pushover-config
+# Tool specific files #
+#######################
+# PHPUnit
+.phpunit.cache
+tests.sqlite
+# vim
+*~
+*.swp
+*.swo
+# sublime text & textmate
+*.sublime-*
+*.stTheme.cache
+*.tmlanguage.cache
+*.tmPreferences.cache
+# Eclipse
+.settings/*
+# JetBrains, aka PHPStorm, IntelliJ IDEA
+.idea/*
+# NetBeans
+nbproject/*
+# Visual Studio Code
+.vscode
+# nova
+.nova
+# Sass preprocessor
+.sass-cache/
+# node
+/node_modules/*
+# yarn
+yarn-debug.log
+yarn-error.log
+config/Migrations/schema-dump-default.lock
+testdb.sqlite
+pushover-config

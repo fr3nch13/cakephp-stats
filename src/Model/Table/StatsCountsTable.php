@@ -5,42 +5,46 @@ declare(strict_types=1);
  * StatsCountsTable
  */
 
-namespace Sis\Stats\Model\Table;
+namespace Fr3nch13\Stats\Model\Table;
 
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
+use Fr3nch13\Stats\Exception\CountsException;
+use Fr3nch13\Stats\Model\Entity\StatsObject;
 
 /**
  * StatsCounts Model
  *
- * @property \Sis\Stats\Model\Table\StatsEntitiesTable&\Cake\ORM\Association\BelongsTo $StatsEntities
- * @method \Sis\Stats\Model\Entity\StatsCount get(mixed $primaryKey, array $options = [])
- * @method \Sis\Stats\Model\Entity\StatsCount newEntity($data = null, array $options = [])
- * @method \Sis\Stats\Model\Entity\StatsCount[] newEntities(array $data, array $options = [])
- * @method \Sis\Stats\Model\Entity\StatsCount|false save(\Sis\Stats\Model\Entity\StatsCount $entity, array $options = [])
- * @method \Sis\Stats\Model\Entity\StatsCount saveOrFail(\Sis\Stats\Model\Entity\StatsCount $entity, array $options = [])
- * @method \Sis\Stats\Model\Entity\StatsCount patchEntity(\Sis\Stats\Model\Entity\StatsCount $entity, array $data, array $options = [])
- * @method \Sis\Stats\Model\Entity\StatsCount[] patchEntities($entities, array $data, array $options = [])
- * @method \Sis\Stats\Model\Entity\StatsCount findOrCreate($search, callable $callback = null, array $options = [])
+ * @property \Fr3nch13\Stats\Model\Table\StatsObjectsTable&\Cake\ORM\Association\BelongsTo $StatsObjects
+ * @method \Fr3nch13\Stats\Model\Entity\StatsCount get(mixed $primaryKey, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\StatsCount newEntity($data = null, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\StatsCount[] newobjects(array $data, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\StatsCount|false save(\Fr3nch13\Stats\Model\Entity\StatsCount $entity, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\StatsCount saveOrFail(\Fr3nch13\Stats\Model\Entity\StatsCount $entity, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\StatsCount patchEntity(\Fr3nch13\Stats\Model\Entity\StatsCount $entity, array $data, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\StatsCount[] patchobjects($objects, array $data, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\StatsCount findOrCreate($search, callable $callback = null, array $options = [])
  */
-class StatsCountsTable extends \Sis\Core\Model\Table\Table
+class StatsCountsTable extends Table
 {
     /**
      * @var array<string, string> The available time periods, and their format.
      */
-    public $time_periods = [
-         'year' => 'yyyy',
-        'month' => 'yyyyMM',
-        'week' => 'yyyyww',
-        'day' => 'yyyyMMdd',
-        'hour' => 'yyyyMMddHH',
+    protected array $time_periods = [
+         'year' => 'Y',
+        'month' => 'Ym',
+        'week' => 'YW',
+        'day' => 'Ymd',
+        'hour' => 'YmdH',
     ];
 
     /**
      * @var array<string, string> Human readable format for time periods.
      */
-    public $nice_time_periods = [
+    protected array $nice_time_periods = [
         'year' => 'F',
         'month' => 'jS',
         'week' => 'l',
@@ -51,7 +55,7 @@ class StatsCountsTable extends \Sis\Core\Model\Table\Table
     /**
      * @var array<string, string> Human readable format for time period ranges.
      */
-    public $nice_time_periods_range = [
+    protected array $nice_time_periods_range = [
         'year' => 'Y',
         'month' => 'M Y',
         'week' => 'D',
@@ -73,10 +77,10 @@ class StatsCountsTable extends \Sis\Core\Model\Table\Table
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
 
-        $this->belongsTo('StatsEntities')
-            ->setForeignKey('stats_entity_id')
+        $this->belongsTo('StatsObjects')
+            ->setForeignKey('stats_object_id')
             ->setJoinType('INNER')
-            ->setClassName('Sis/Stats.StatsEntities');
+            ->setClassName('Fr3nch13/Stats.StatsObjects');
     }
 
     /**
@@ -92,11 +96,11 @@ class StatsCountsTable extends \Sis\Core\Model\Table\Table
             ->allowEmptyFor('id', Validator::EMPTY_NULL, Validator::WHEN_CREATE);
 
         $validator
-            ->integer('stats_entity_id')
-            ->requirePresence('stats_entity_id', Validator::WHEN_CREATE);
+            ->integer('stats_object_id')
+            ->requirePresence('stats_object_id', Validator::WHEN_CREATE);
 
         $validator
-            ->ascii('time_period')
+            ->scalar('time_period')
             ->maxLength('time_period', 20)
             ->notEmptyString('time_period')
             ->requirePresence('time_period', Validator::WHEN_CREATE);
@@ -121,9 +125,12 @@ class StatsCountsTable extends \Sis\Core\Model\Table\Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(\Cake\ORM\RulesChecker $rules): \Cake\ORM\RulesChecker
+    public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn(['stats_entity_id'], 'StatsEntities'));
+        $rules->add($rules->existsIn('stats_object_id', 'StatsObjects'), [
+            'errorField' => 'stats_object_id',
+            'message' => __('Unknown Stats Object'),
+        ]);
 
         return $rules;
     }
@@ -131,62 +138,65 @@ class StatsCountsTable extends \Sis\Core\Model\Table\Table
     /**
      * Adds a count for an entity
      *
-     * @param \Sis\Stats\Model\Entity\StatsEntity $statsEntity The entity this count will belong to.
+     * @param \Fr3nch13\Stats\Model\Entity\StatsObject $statsObject The entity this count will belong to.
      * @param int $time_count The count for this count instance/record.
-     * @param null|\Cake\I18n\FrozenTime $timestamp The timestamp of the count being added/updated.
-     * @param string|array<int|string, string> $timeperiods The timeperiods to use for this count.
-     * @param mixed $increment If we should imcrement the count, or overwrite it. default is to overwrite.
-     * @return array<int,\Sis\Stats\Model\Entity\StatsCount> entities.
+     * @param \Cake\I18n\DateTime|null $timestamp The timestamp of the count being added/updated.
+     * @param array<int|string, string>|string $timeperiods The timeperiods to use for this count.
+     * @return array<string,\Fr3nch13\Stats\Model\Entity\StatsCount> objects.
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @TODO Use a more specific Exception when the save fails
      */
     public function addUpdateCount(
-        \Sis\Stats\Model\Entity\StatsEntity $statsEntity,
-        int $time_count,
-        $timestamp = null,
-        $timeperiods = ['hour'],
-        $increment = false
-    ) {
+        StatsObject $statsObject,
+        int $time_count = 1,
+        ?DateTime $timestamp = null,
+        ?array $timeperiods = null,
+    ): array {
         $out = [];
+        $validTimeperiods = $this->getTimePeriods();
+
         if (!$timestamp) {
-            $timestamp = new FrozenTime();
+            $timestamp = new DateTime();
         }
-        if (is_string($timeperiods)) {
-            $timeperiods = [$timeperiods];
+
+        if (!$timeperiods) {
+            $timeperiods = $validTimeperiods;
         }
+
         $timestamps = $this->getTimeStamps($timestamp);
 
         foreach ($timeperiods as $timeperiod) {
+            // make sure it's a valid time period
+            if (!in_array($timeperiod, $validTimeperiods, true)) {
+                throw new CountsException(__('Invalid timeperiod: {0}', [
+                    $timeperiod,
+                ]));
+            }
+
             // see if this exists.
             $where = [
-                'stats_entity_id' => $statsEntity->get('id'),
+                'stats_object_id' => $statsObject->id,
                 'time_period' => $timeperiod,
                 'time_stamp' => $timestamps[$timeperiod],
             ];
-            /** @var \Sis\Stats\Model\Entity\StatsCount|null $statsCount */
+
+            /** @var \Fr3nch13\Stats\Model\Entity\StatsCount|null $statsCount */
             $statsCount = $this->find('all')
                 ->where($where)
                 ->first();
             if ($statsCount === null) {
+                $where['time_count'] = 0;
                 $statsCount = $this->newEntity($where);
             }
-            if ($increment) {
-                if ($increment === true) {
-                    $statsCount->set('time_count', $statsCount->get('time_count') + $time_count);
-                } elseif ($increment == 'diff' && $time_count > $statsCount->get('time_count')) {
-                    $diff = $time_count - $statsCount->get('time_count');
-                    $statsCount->set('time_count', $statsCount->get('time_count') + $diff);
-                }
-            } elseif ($statsCount->get('time_count') !== $time_count) {
-                $statsCount->set('time_count', $time_count);
-            }
+            $statsCount->set('time_count', $statsCount->time_count + $time_count);
+
             if ($statsCount->isDirty() || $statsCount->isNew()) {
                 $statsCount = $this->saveOrFail($statsCount);
-                // update the entities last updated timestamp.
-                $statsEntity->set('last_updated', new FrozenTime());
-                $statsEntity = $this->StatsEntities->saveOrFail($statsEntity);
+                // update the objects last updated timestamp.
+                $statsObject->set('last_updated', new DateTime());
+                $statsObject = $this->StatsObjects->saveOrFail($statsObject);
             }
-            $out[intval($statsCount->get('id'))] = $statsCount;
+            $out[$timeperiod] = $statsCount;
         }
 
         return $out;
@@ -195,22 +205,19 @@ class StatsCountsTable extends \Sis\Core\Model\Table\Table
     /**
      * Creates the matrix of timestamps.
      *
-     * @param null|\Cake\I18n\FrozenTime|\DateTimeImmutable $timestamp The timestamp to generate the matrix from.
+     * @param \Cake\I18n\DateTime|null $timestamp The timestamp to generate the matrix from.
      * @return array<string, string> The timestamp matrix.
      */
-    public function getTimeStamps($timestamp = null): array
+    public function getTimeStamps(?DateTime $timestamp = null): array
     {
         if (!$timestamp) {
-            $timestamp = new FrozenTime();
-        }
-        if ($timestamp instanceof \DateTimeImmutable) {
-            $timestamp = new FrozenTime($timestamp);
+            $timestamp = new DateTime();
         }
 
         $timestamps = [];
         foreach ($this->time_periods as $time_period => $time_format) {
-            $time_stamp = strval($timestamp->i18nFormat($time_format));
-            $timestamps[$time_period] = $time_stamp;
+            $time_stamp = $timestamp->format($time_format);
+            $timestamps[$time_period] = intval($time_stamp);
         }
 
         return $timestamps;
@@ -229,12 +236,12 @@ class StatsCountsTable extends \Sis\Core\Model\Table\Table
     /**
      * Calculates the timestamp ranges needed to get the proper counts.
      *
-     * @param \Cake\I18n\FrozenTime $timestamp The stating point for the range
+     * @param \Cake\I18n\DateTime $timestamp The stating point for the range
      * @param int $range The range length
      * @param string $timeperiod The type of range, (hours, days, months, etc)
      * @return array<int, string> The calculated and generated matrix of dates/times.
      */
-    public function getTimestampRange(FrozenTime $timestamp, int $range, string $timeperiod): array
+    public function getTimestampRange(DateTime $timestamp, int $range, string $timeperiod): array
     {
         $timeperiodPlural = Inflector::pluralize($timeperiod);
         $dates = [];
@@ -254,48 +261,50 @@ class StatsCountsTable extends \Sis\Core\Model\Table\Table
     }
 
     /**
-     * Gets the counts for a key with the given FrozenTime as the start, and going back X timeperiods.
+     * Gets the counts for a key with the given DateTime as the start, and going back X timeperiods.
      *
-     * @param string $entityKey The key of the entity we want to get.
-     * @param \Cake\I18n\FrozenTime $timestamp The date that we should start at, if null, then today will be used.
+     * @param string $objectKey The key of the entity we want to get.
+     * @param \Cake\I18n\DateTime $timestamp The date that we should start at, if null, then today will be used.
      * @param int $range How far we should go back in $timeperiod.
-     * @param string $timeperiod The timeperiod we should use. see \Sis\Stats\Model\Table\StatsCounts::$time_periods.
-     * @return null|array<string, mixed> Returns the entity and it's counts.
+     * @param string $timeperiod The timeperiod we should use. see \Fr3nch13\Stats\Model\Table\StatsCounts::$time_periods.
+     * @return array<string, mixed>|null Returns the entity and it's counts.
      */
-    public function getEntityCounts(
-        string $entityKey,
-        FrozenTime $timestamp,
+    public function getObjectCounts(
+        string $objectKey,
+        DateTime $timestamp,
         int $range,
         string $timeperiod
     ): ?array {
-        $entity = $this->StatsEntities->find('byKey', [
-            'key' => $entityKey,
+        // make sure it's a valid time period
+        if (!in_array($timeperiod, $this->getTimePeriods(), true)) {
+            throw new CountsException(__('Invalid timeperiod: {0}', [
+                $timeperiod,
+            ]));
+        }
+
+        $object = $this->StatsObjects->find('byKey', [
+            'key' => $objectKey,
         ])->first();
 
-        if (!$entity) {
-            // if the Entity can't be found, create a dummy one.
-            $entity = $this->StatsEntities->newEntity([
-                'key' => $entityKey,
-                'name' => str_replace('.', ' ', $entityKey),
+        if (!$object) {
+            // if the Object can't be found, create a dummy one.
+            $object = $this->StatsObjects->newEntity([
+                'key' => $objectKey,
+                'name' => str_replace('.', ' ', $objectKey),
                 'color' => '#FF0000',
                 'description' => null,
                 'active' => true,
                 'ic_id' => null,
             ]);
-            $entity->set('id', 0);
+            $object->set('id', 0);
         }
 
         $return = [
-            'entity' => $entity,
+            'object' => $object,
             'counts' => [],
         ];
 
         //// calculate the range of timestamps that we need.
-
-        // not a valid timeperiod.
-        if (!in_array($timeperiod, $this->getTimePeriods())) {
-            return $return;
-        }
 
         // get the calculated timestam range
         $range = $this->getTimestampRange($timestamp, $range, $timeperiod);
@@ -304,7 +313,7 @@ class StatsCountsTable extends \Sis\Core\Model\Table\Table
         $counts = [];
         foreach ($range as $date) {
             $counts[$date] = $this->newEntity([
-                'stats_entity_id' => $entity->get('id'),
+                'stats_object_id' => $object->id,
                 'time_period' => $timeperiod,
                 'time_stamp' => $date,
                 'time_count' => 0,
@@ -312,7 +321,7 @@ class StatsCountsTable extends \Sis\Core\Model\Table\Table
         }
 
         $where = [
-            'StatsCounts.stats_entity_id' => $entity->get('id'),
+            'StatsCounts.stats_object_id' => $object->id,
             'StatsCounts.time_period' => $timeperiod,
             'StatsCounts.time_stamp IN' => $range,
         ];
@@ -321,7 +330,7 @@ class StatsCountsTable extends \Sis\Core\Model\Table\Table
             ->where($where);
 
         foreach ($query as $count) {
-            $time_stamp = $count->get('time_stamp');
+            $time_stamp = $count->time_stamp;
             $counts[$time_stamp] = $count;
         }
         $return['counts'] = $counts;
@@ -330,24 +339,24 @@ class StatsCountsTable extends \Sis\Core\Model\Table\Table
     }
 
     /**
-     * Returns an array of counts for multiple entities.
+     * Returns an array of counts for multiple objects.
      *
-     * @param array<string> $entityKeys The array of entity keys we want to get.
-     * @param \Cake\I18n\FrozenTime $timestamp The date that we should start at, if null, then today will be used.
+     * @param array<string> $objectKeys The array of entity keys we want to get.
+     * @param \Cake\I18n\DateTime $timestamp The date that we should start at, if null, then today will be used.
      * @param int $range How far we should go back in $timeperiod.
-     * @param string $timeperiod The timeperiod we should use. see \Sis\Stats\Model\Table\StatsCounts::$time_periods.
-     * @return array<int|string, mixed> Returns the entities and their counts.
+     * @param string $timeperiod The timeperiod we should use. see \Fr3nch13\Stats\Model\Table\StatsCounts::$time_periods.
+     * @return array<int|string, mixed> Returns the objects and their counts.
      */
-    public function getEntitiesCounts(
-        array $entityKeys,
-        FrozenTime $timestamp,
+    public function getobjectsCounts(
+        array $objectKeys,
+        DateTime $timestamp,
         int $range,
         string $timeperiod
     ): array {
         $return = [];
 
-        foreach ($entityKeys as $entityKey) {
-            $return[$entityKey] = $this->getEntityCounts($entityKey, $timestamp, $range, $timeperiod);
+        foreach ($objectKeys as $objectKey) {
+            $return[$objectKey] = $this->getObjectCounts($objectKey, $timestamp, $range, $timeperiod);
         }
 
         return $return;

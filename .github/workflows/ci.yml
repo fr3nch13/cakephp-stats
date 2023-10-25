@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  testsuite:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.1', '8.2', 'latest']
+        composer-options: ['']
+
+    steps:
+    - name: Git checkout
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: mbstring, intl, pdo_sqlite
+        ini-values: zend.assertions=1
+        coverage: none
+
+    - name: Composer install
+      uses: ramsey/composer-install@v2
+      with:
+        composer-options: ${{ matrix.composer-options }}
+
+    - name: Composer post install
+      run: composer run-script post-install-cmd --no-interaction
+
+    - name: Run PHPUnit
+      run: composer test
+      env:
+        DATABASE_TEST_URL: sqlite://./testdb.sqlite
+
+  coding-standard:
+    name: Coding Standard & Static Analysis
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Git checkout
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, intl
+        coverage: none
+        tools: cs2pr, phpstan:1.10
+
+    - name: Composer install
+      uses: ramsey/composer-install@v2
+
+    - name: Run PHP CodeSniffer
+      run: vendor/bin/phpcs --report=checkstyle | cs2pr
+
+    - name: Run phpstan
+      if: always()
+      run: phpstan
+
+  coverage-php:
+    name: Code Coverage
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Git checkout
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, intl
+        coverage: pcov
+
+    - name: Composer install
+      uses: ramsey/composer-install@v2
+
+    - name: Run PHPUnit
+      run:  composer run-script coverage-clover
+
+    - name: Upload to Codecov
+      uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      with:
+        files: ./tmp/coverage.xml
+        verbose: true

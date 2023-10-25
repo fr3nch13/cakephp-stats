@@ -1,21 +1,25 @@
 <?php
 declare(strict_types=1);
 
-namespace Sis\Stats\Test\TestCase\Model\Table;
+namespace Fr3nch13\Stats\Test\TestCase\Model\Table;
 
 use App\Application;
+use Cake\Core\Configure;
 use Cake\Event\EventList;
 use Cake\TestSuite\TestCase;
+use Fr3nch13\Stats\Model\Entity\Test;
+use Fr3nch13\Stats\Model\Table\StatsObjectsTable;
+use Fr3nch13\Stats\Model\Table\TestsTable;
 
 /**
- * Sis\Stats\Model\Table\TestsTable Test Case
+ * Fr3nch13\Stats\Model\Table\TestsTable Test Case
  */
 class TestsTableTest extends TestCase
 {
     /**
      * Test subject
      *
-     * @var \Sis\Stats\Model\Table\TestsTable
+     * @var \Fr3nch13\Stats\Model\Table\TestsTable
      */
     public $Tests;
 
@@ -27,9 +31,9 @@ class TestsTableTest extends TestCase
     public function getFixtures(): array
     {
         return [
-            'plugin.Sis/Stats.StatsEntities',
-            'plugin.Sis/Stats.StatsCounts',
-            'plugin.Sis/Stats.Tests',
+            'plugin.Fr3nch13/Stats.StatsObjects',
+            'plugin.Fr3nch13/Stats.StatsCounts',
+            'plugin.Fr3nch13/Stats.Tests',
         ];
     }
 
@@ -41,25 +45,15 @@ class TestsTableTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        Configure::write('debug', true);
 
-        // needed here so that the TestsListener (StatsListener) gets registered.
-        $app = new Application(CONFIG);
-        $app->bootstrap();
-        $app->pluginBootstrap();
+        //$this->loadRoutes();
 
-        /** @var \Cake\ORM\Locator\TableLocator $Locator */
-        $Locator = $this->getTableLocator();
-        $Locator->allowFallbackClass(false);
-
-        /** @var \Sis\Stats\Model\Table\TestsTable $Tests */
-        $Tests = $Locator->get('Sis/Stats.Tests');
+        $config = $this->getTableLocator()->exists('Fr3nch13/Stats.Tests') ? [] : ['className' => TestsTable::class];
+        /** @var \Fr3nch13\Stats\Model\Table\TestsTable $Tests */
+        $Tests = $this->getTableLocator()->get('Tests', $config);
         $this->Tests = $Tests;
-
-        // make phpstan happy.
-        /** @var \Cake\Event\EventManager $eventManager */
-        $eventManager = $this->Tests->getEventManager();
-
-        $eventManager->setEventList(new EventList());
+        debug($this->Tests);
     }
 
     /**
@@ -69,7 +63,7 @@ class TestsTableTest extends TestCase
      */
     public function testClassInstance(): void
     {
-        $this->assertInstanceOf(\Sis\Stats\Model\Table\TestsTable::class, $this->Tests);
+        $this->assertInstanceOf(TestsTable::class, $this->Tests);
     }
 
     /**
@@ -105,7 +99,7 @@ class TestsTableTest extends TestCase
     {
         $entity = $this->Tests->get(1);
 
-        $this->assertInstanceOf(\Sis\Stats\Model\Entity\Test::class, $entity);
+        $this->assertInstanceOf(Test::class, $entity);
 
         $this->assertSame('Test 1', $entity->get('name'));
     }
@@ -128,23 +122,30 @@ class TestsTableTest extends TestCase
      */
     public function testStatsListener(): void
     {
-        // remove the behavior so that we can test that the listener is adding the behavior
+
+        $config = $this->getTableLocator()->exists('Fr3nch13/Stats.StatsObjects') ? [] : ['className' => StatsObjectsTable::class];
+        /** @var \Fr3nch13\Stats\Model\Table\StatsObjectsTable $StatsObjects */
+        $StatsObjects = $this->getTableLocator()->get('StatsObjects', $config);
+
+        // make sure the object doesn't exist
+        $this->assertSame(0, $StatsObjects->find('byKey', key: 'test')->count());
+
+        // Trigger the Event
         $this->Tests->testStatsListener();
 
-        // test if the stats behavior was added.
-        $behaviors = $this->Tests->behaviors()->loaded();
-        $this->assertSame(['Stats'], $behaviors);
+        // make sure the object doesn't exist
+        $this->assertSame(1, $StatsObjects->find('byKey', key: 'test')->count());
 
         // make phpstan happy.
         /** @var \Cake\Event\EventManager $eventManager */
         $eventManager = $this->Tests->getEventManager();
 
-        $this->assertEventFired('Stats.Stats.Test.before', $eventManager);
+        $this->assertEventFired('Stats.Test.before', $eventManager);
 
-        // check of the entities were created.
+        // check of the objects were created.
 
-        $this->assertEventFired('Stats.Stats.Test.after', $eventManager);
+        $this->assertEventFired('Stats.Test.after', $eventManager);
 
-        // check of the counts for the entities were created/updated.
+        // check of the counts for the objects were created/updated.
     }
 }
