@@ -13,6 +13,12 @@
     ],
     "minimum-stability": "dev",
     "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
     "require": {
         "cakephp/cakephp": "~5.0",
         "cakephp/migrations": "~4.1",
@@ -67,5 +73,8 @@
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "cakephp/plugin-installer": true
         }
+    },
+    "suggest": {
+        "bower-asset/chartjs": "If you want to use the templates/element/chartjs/* elements. See: https://asset-packagist.org"
     }
 }

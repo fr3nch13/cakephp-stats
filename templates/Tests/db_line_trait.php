@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @var \Fr3nch13\Stats\View\StatsView $this
+ * @var \Cake\View\View $this
  */
 
 $this->extend('Fr3nch13/Stats./db_line_base');

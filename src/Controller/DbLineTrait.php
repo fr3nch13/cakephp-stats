@@ -9,8 +9,8 @@ namespace Fr3nch13\Stats\Controller;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Http\Response;
 use Cake\I18n\DateTime;
-use Cake\ORM\Table;
 use Cake\Utility\Inflector;
+use Fr3nch13\Stats\Model\Table\StatsCountsTable;
 
 /**
  * DbLineTrait
@@ -36,17 +36,13 @@ trait DbLineTrait
         ?DateTime $start = null,
         array $ids = []
     ): ?Response {
-        // redirect to the frontend url is correct.
+        // redirect so the frontend url is correct.
         if (!$range || !$timeperiod) {
             return $this->redirect(['action' => $this->getRequest()->getParam('action'), 7, 'day']);
         }
-        //$StatsObject =
+        $StatsCounts = $this->fetchModel(StatsCountsTable::class);
 
-        if (!$Table->behaviors()->has('Stats')) {
-            $Table->addBehavior('Fr3nch13/Stats.Stats');
-        }
-
-        $timeperiods = $Table->statsGetTimeperiods();
+        $timeperiods = $StatsCounts->getTimePeriods();
         if (!in_array($timeperiod, $timeperiods)) {
             $timeperiod = 'day';
         }
@@ -69,7 +65,7 @@ trait DbLineTrait
             }
         }
 
-        $stats = $Table->statsGetobjectsCounts($keys, $start, (int)$range, $timeperiod);
+        $stats = $StatsCounts->getobjectsCounts($keys, $start, (int)$range, $timeperiod);
 
         // try to combine the counts.
         if ($ids) {

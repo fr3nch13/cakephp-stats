@@ -2,10 +2,10 @@
 declare(strict_types=1);
 
 /**
- * TicketsController
+ * TestsController
  */
 
-namespace Fr3nch13\TestApp\Controller;
+namespace Fr3nch13\Stats\Controller;
 
 use Cake\Http\Response;
 use Cake\I18n\DateTime;
@@ -13,31 +13,16 @@ use Cake\Controller\Controller;
 use Fr3nch13\Stats\Controller\DbLineTrait;
 
 /**
- * Tickets Controller
+ * Tests Controller
  *
  * Used to help with unit testing, specifically the DbLineTrait
- *
- * @property \Fr3nch13\TestApp\Model\Table\TicketsTable $Tickets
- * @method \Cake\ORM\Entity[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class TicketsController extends Controller
+class TestsController extends Controller
 {
     /**
      * Used to do the common tasks for dbLine blocks.
      */
     use DbLineTrait;
-
-    /**
-     * Initialize method.
-     *
-     * @return void
-     */
-    public function initialize(): void
-    {
-        // Existing code
-        parent::initialize();
-        $authAllowedActions = ['dbLineTrait', 'dbLineTraitIds'];
-    }
 
     /**
      * Dashboard Test Block
@@ -46,7 +31,7 @@ class TicketsController extends Controller
      * @param string|null $timeperiod The Interval for the line graph
      * @return \Cake\Http\Response|null
      */
-    public function dbLineTrait(mixed $range = null, ?string $timeperiod = null): ?Response
+    public function dbLineTrait(?int $range = null, ?string $timeperiod = null): ?Response
     {
         $keys = [
             'Tickets.open',
@@ -54,7 +39,7 @@ class TicketsController extends Controller
             'Tickets.needsReview',
         ];
 
-        return $this->dbLineCommon($this->Tickets, $keys, $range, $timeperiod);
+        return $this->dbLineCommon($keys, $range, $timeperiod);
     }
 
     /**
@@ -71,13 +56,12 @@ class TicketsController extends Controller
         ];
 
         return $this->dbLineCommon(
-            $this->Tickets,
             $keys,
             $range,
             $timeperiod,
             __('Test Title IDS'),
-            new DateTime('2023-10-21'),
-            [108, 11, 52]
+            new DateTime(),
+            [1, 2, 3]
         );
     }
 }

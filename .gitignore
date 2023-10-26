@@ -6,6 +6,7 @@
 /tmp/*
 /vendor/*
 /webroot/assets/*
+/coverage/*
 !*.gitkeep
 
 # OS generated files #
