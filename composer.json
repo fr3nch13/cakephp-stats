@@ -57,15 +57,15 @@
             "@cs-fix",
             "@cs-check"
         ],
-        "cs-check": "vendor/bin/phpcs --colors -p -s --extensions=php ./src ./templates ./tests",
-        "cs-fix": "vendor/bin/phpcbf --colors --extensions=php ./src ./templates ./tests",
-        "phpstan": "vendor/bin/phpstan --no-progress -vvv",
-        "test": "vendor/bin/phpunit",
-        "test-ci": "php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-text --colors=never --coverage-cobertura=coverage.cobertura.xml --log-junit unitreport.xml",
-        "coverage": "php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-html coverage",
-        "coverage-clover": "php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-clover=coverage.xml",
-        "coverage-text": "php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-text --colors=never",
-        "coverage-artifact": "php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-text --colors=never --coverage-cobertura=coverage.cobertura.xml"
+        "cs-check": "php -d memory_limit=-1 vendor/bin/phpcs --colors -p -s --extensions=php ./src ./templates ./tests",
+        "cs-fix": "php -d memory_limit=-1 vendor/bin/phpcbf --colors --extensions=php ./src ./templates ./tests",
+        "phpstan": "php -d memory_limit=-1 vendor/bin/phpstan --no-progress -vvv",
+        "test": "php -d memory_limit=-1 vendor/bin/phpunit",
+        "test-ci": "php -d memory_limit=-1 -d xdebug.mode=coverage vendor/bin/phpunit --coverage-text --colors=never --coverage-cobertura=coverage.cobertura.xml --log-junit unitreport.xml",
+        "coverage": "php -d memory_limit=-1 -d xdebug.mode=coverage vendor/bin/phpunit --coverage-html coverage",
+        "coverage-clover": "php -d memory_limit=-1 -d xdebug.mode=coverage vendor/bin/phpunit --coverage-clover=coverage.xml",
+        "coverage-text": "php -d memory_limit=-1 -d xdebug.mode=coverage vendor/bin/phpunit --coverage-text --colors=never",
+        "coverage-artifact": "php -d memory_limit=-1 -d xdebug.mode=coverage vendor/bin/phpunit --coverage-text --colors=never --coverage-cobertura=coverage.cobertura.xml"
     },
     "config": {
         "sort-packages": true,

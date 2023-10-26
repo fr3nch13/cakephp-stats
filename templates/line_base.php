@@ -24,7 +24,7 @@ if (!$this->get('timeperiodPlural')) {
 if (!$this->get('range')) {
     $this->set('range', 30);
 }
-echo $this->element('chartjs/block-line', [
+echo $this->element('Fr3nch13/Stats.chartjs/block-line', [
     'title' => $this->get('title'),
     'stats' => $this->get('stats'),
     'timeperiod' => $this->get('timeperiod'),

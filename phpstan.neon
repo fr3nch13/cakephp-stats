@@ -4,6 +4,7 @@ parameters:
 	checkGenericClassInNonGenericObjectType: false
 	bootstrapFiles:
 		- vendor/cakephp/cakephp/src/functions.php
+		- tests/bootstrap.php
 	paths:
 		- src/
 		- tests/

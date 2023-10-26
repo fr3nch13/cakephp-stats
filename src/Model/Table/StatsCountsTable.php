@@ -166,12 +166,7 @@ class StatsCountsTable extends Table
         $timestamps = $this->getTimeStamps($timestamp);
 
         foreach ($timeperiods as $timeperiod) {
-            // make sure it's a valid time period
-            if (!in_array($timeperiod, $validTimeperiods, true)) {
-                throw new CountsException(__('Invalid timeperiod: {0}', [
-                    $timeperiod,
-                ]));
-            }
+            $this->checkTimePeriod($timeperiod);
 
             // see if this exists.
             $where = [
@@ -276,11 +271,8 @@ class StatsCountsTable extends Table
         string $timeperiod
     ): ?array {
         // make sure it's a valid time period
-        if (!in_array($timeperiod, $this->getTimePeriods(), true)) {
-            throw new CountsException(__('Invalid timeperiod: {0}', [
-                $timeperiod,
-            ]));
-        }
+
+        $this->checkTimePeriod($timeperiod);
 
         $object = $this->StatsObjects->find('byKey', key: $objectKey)->first();
 
@@ -358,5 +350,21 @@ class StatsCountsTable extends Table
         }
 
         return $return;
+    }
+
+    /**
+     * Checks to make sure the timeperiod is valid
+     *
+     * @param string $timeperiod The time period to check
+     * @return void
+     * @throws \Fr3nch13\Stats\Exception\CountsException If the timeperiod is invalid.
+     */
+    public function checkTimePeriod(string $timeperiod): void
+    {
+        if (!in_array($timeperiod, $this->getTimePeriods(), true)) {
+            throw new CountsException(__('Invalid timeperiod: {0}', [
+                $timeperiod,
+            ]));
+        }
     }
 }

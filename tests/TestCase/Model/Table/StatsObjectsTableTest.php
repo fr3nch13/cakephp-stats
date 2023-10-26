@@ -282,11 +282,11 @@ class StatsObjectsTableTest extends TestCase
         $this->assertSame(intval($now->format('YW')), $entity->stats_counts['week']->time_stamp);
         $this->assertSame(intval($now->format('Ymd')), $entity->stats_counts['day']->time_stamp);
         $this->assertSame(intval($now->format('YmdH')), $entity->stats_counts['hour']->time_stamp);
-        $this->assertSame(12001, $entity->stats_counts['year']->time_count);
-        $this->assertSame(3001, $entity->stats_counts['month']->time_count);
-        $this->assertSame(701, $entity->stats_counts['week']->time_count);
-        $this->assertSame(101, $entity->stats_counts['day']->time_count);
-        $this->assertSame(11, $entity->stats_counts['hour']->time_count);
+        $this->assertSame(12002, $entity->stats_counts['year']->time_count);
+        $this->assertSame(3002, $entity->stats_counts['month']->time_count);
+        $this->assertSame(702, $entity->stats_counts['week']->time_count);
+        $this->assertSame(102, $entity->stats_counts['day']->time_count);
+        $this->assertSame(12, $entity->stats_counts['hour']->time_count);
 
         // test with a new key, and count field
         $now = new DateTime();
@@ -361,11 +361,11 @@ class StatsObjectsTableTest extends TestCase
         $this->assertSame(intval($now->format('YW')), $entity->stats_counts['week']->time_stamp);
         $this->assertSame(intval($now->format('Ymd')), $entity->stats_counts['day']->time_stamp);
         $this->assertSame(intval($now->format('YmdH')), $entity->stats_counts['hour']->time_stamp);
-        $this->assertSame(12001, $entity->stats_counts['year']->time_count);
-        $this->assertSame(3001, $entity->stats_counts['month']->time_count);
-        $this->assertSame(701, $entity->stats_counts['week']->time_count);
-        $this->assertSame(101, $entity->stats_counts['day']->time_count);
-        $this->assertSame(11, $entity->stats_counts['hour']->time_count);
+        $this->assertSame(12002, $entity->stats_counts['year']->time_count);
+        $this->assertSame(3002, $entity->stats_counts['month']->time_count);
+        $this->assertSame(702, $entity->stats_counts['week']->time_count);
+        $this->assertSame(102, $entity->stats_counts['day']->time_count);
+        $this->assertSame(12, $entity->stats_counts['hour']->time_count);
 
         // valid count and future timestamp
         $now = new DateTime('+1 year');
@@ -473,8 +473,8 @@ class StatsObjectsTableTest extends TestCase
         $this->assertFalse(isset($entity->stats_counts['hour']));
         $this->assertSame(intval($now->format('Y')), $entity->stats_counts['year']->time_stamp);
         $this->assertSame(intval($now->format('Ymd')), $entity->stats_counts['day']->time_stamp);
-        $this->assertSame(12001, $entity->stats_counts['year']->time_count);
-        $this->assertSame(101, $entity->stats_counts['day']->time_count);
+        $this->assertSame(12002, $entity->stats_counts['year']->time_count);
+        $this->assertSame(102, $entity->stats_counts['day']->time_count);
 
         // valid count and bad timeperiod
         $this->expectException(CountsException::class);

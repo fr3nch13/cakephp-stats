@@ -185,13 +185,7 @@ class StatsObjectsTable extends Table
             if (isset($fields['timeperiods']) && is_array($fields['timeperiods'])) {
                 // make sure they're all valid time periods
                 foreach ($fields['timeperiods'] as $timeperiod) {
-
-                    // make sure it's a valid time period
-                    if (!in_array($timeperiod, $this->StatsCounts->getTimePeriods(), true)) {
-                        throw new CountsException(__('Invalid timeperiod: {0}', [
-                            $timeperiod,
-                        ]));
-                    }
+                    $this->StatsCounts->checkTimePeriod($timeperiod);
                 }
 
                 $timeperiods = $fields['timeperiods'];

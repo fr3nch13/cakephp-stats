@@ -14,10 +14,7 @@ $cakeDescription = 'My Test App';
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <?= $this->Html->charset(); ?>
-    <title>
-        <?= $cakeDescription ?>:
-        <?= $this->fetch('title'); ?>
-    </title>
+    <title><?= $cakeDescription ?>: <?= $this->fetch('title'); ?></title>
     <?php
         echo $this->Html->meta('icon');
 
@@ -25,6 +22,7 @@ $cakeDescription = 'My Test App';
 
         echo $this->fetch('script');
     ?>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div id="container">
