@@ -2,7 +2,8 @@
 declare(strict_types=1);
 
 /**
- * Used by controllers for the common methods.
+ * Used by controllers for chartjs graphs,
+ * but can also be used just to get the data you need in a controller
  */
 namespace Fr3nch13\Stats\Controller;
 
@@ -20,7 +21,7 @@ trait ChartJsTrait
     use ModelAwareTrait;
 
     /**
-     * Performs the common DB Linegraph functions.
+     * Performs the common chartJs Line graph.
      *
      * @param array<string> $keys The keys to lookup.
      * @param mixed|null $range Go back x number of stats.

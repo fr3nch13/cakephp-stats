@@ -20,7 +20,7 @@ use Fr3nch13\Stats\Controller\ChartJsTrait;
 class TestsController extends Controller
 {
     /**
-     * Used to do the common tasks for dbLine blocks.
+     * Used to do the common tasks for chartjs graphs.
      */
     use ChartJsTrait;
 
