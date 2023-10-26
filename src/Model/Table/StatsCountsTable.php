@@ -262,7 +262,7 @@ class StatsCountsTable extends Table
      * @param \Cake\I18n\DateTime $timestamp The date that we should start at, if null, then today will be used.
      * @param int $range How far we should go back in $timeperiod.
      * @param string $timeperiod The timeperiod we should use. see \Fr3nch13\Stats\Model\Table\StatsCounts::$time_periods.
-     * @return array<string, mixed>|null Returns the entity and it's counts.
+     * @return array<string, array<mixed>>|null Returns the entity and it's counts.
      */
     public function getObjectCounts(
         string $objectKey,
