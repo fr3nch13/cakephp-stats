@@ -16,7 +16,7 @@ composer require fr3nch13/cakephp-stats
 
 This all revolves around the event listener [`StatsListener`](src/Event/StatsListener.php).
 
-To use this plugin, you need to extend the `StatsListener`, define your `objects` in it, and register your listener.
+To use this plugin, you need to extend the `StatsListener`, define your `StatsObject` `keys` in it, and register your listener.
 As an example of how to extend the `StatsListener` and define your `objects`.
 
 See [CakePHP's Event System](https://book.cakephp.org/5/en/core-libraries/events.html#events-system)
@@ -122,7 +122,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-
+use Fr3nch13\Stats\Controller\ChartJsTrait;
 
 class TestsController extends AppController
 {
