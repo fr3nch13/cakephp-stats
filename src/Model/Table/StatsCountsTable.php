@@ -13,6 +13,7 @@ use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 use Fr3nch13\Stats\Exception\CountsException;
+use Fr3nch13\Stats\Model\Entity\StatsCount;
 use Fr3nch13\Stats\Model\Entity\StatsObject;
 
 /**
@@ -366,5 +367,61 @@ class StatsCountsTable extends Table
                 $timeperiod,
             ]));
         }
+    }
+
+    /**
+     * Gets the stat count for a specific key
+     *
+     * @param string $key The stat object key to look up.
+     * @param string $timeperiod The timeperiod you want to the stat for.
+     * @param \Cake\I18n\DateTime $timestamp Optional, the timestamp you want the stat for, if not now.
+     * @return int The stat count, if found, or 0.
+     * @throws \Fr3nch13\Stats\Exception\CountsException If the timeperiod is invalid.
+     */
+    public function getObjectStat(
+        string $key,
+        string $timeperiod,
+        ?DateTime $timestamp = null
+    ): int {
+        if (!$timestamp) {
+            $timestamp = new DateTime();
+        }
+        $stats = $this->getObjectCounts($key, $timestamp, 1, $timeperiod);
+
+        $count = 0;
+        if (isset($stats['counts']) && !empty($stats['counts'])) {
+            $last = end($stats['counts']);
+            if ($last instanceof StatsCount) {
+                $count = $last->time_count;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * Gets the stat counts for a specific key
+     *
+     * @param string $key The stat object key to look up.
+     * @param \Cake\I18n\DateTime $timestamp Optional, the timestamp you want the stat for, if not now.
+     * @return array<string, int> The array of timestamps and their counts.
+     * @throws \Fr3nch13\Stats\Exception\CountsException If the timeperiod is invalid.
+     */
+    public function getObjectStats(
+        string $key,
+        ?DateTime $timestamp = null
+    ): array {
+        if (!$timestamp) {
+            $timestamp = new DateTime();
+        }
+
+        $timeperiods = $this->getTimePeriods();
+
+        $out = [];
+        foreach ($timeperiods as $timeperiod) {
+            $out[$timeperiod] = $this->getObjectStat($key, $timeperiod, $timestamp);
+        }
+
+        return $out;
     }
 }

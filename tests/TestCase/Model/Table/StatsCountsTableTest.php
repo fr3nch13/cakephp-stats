@@ -451,4 +451,135 @@ class StatsCountsTableTest extends TestCase
             'Stats.Tests.open', // existing
         ], $now, 5, 'badtimeperiod');
     }
+
+    /**
+     * Test getting a specific stat count
+     *
+     * @uses \Fr3nch13\Stats\Model\Table\StatsCountsTable::getObjectStat()
+     * @return void
+     */
+    public function testGetObjectStat(): void
+    {
+        // hour
+        $count = $this->StatsCounts->getObjectStat('Stats.Tests.open', 'hour');
+        $this->assertSame(11, $count);
+        // last hour
+        $count = $this->StatsCounts->getObjectStat('Stats.Tests.open', 'hour', new DateTime('-1 hour'));
+        $this->assertSame(0, $count);
+
+        // today
+        $count = $this->StatsCounts->getObjectStat('Stats.Tests.open', 'day');
+        $this->assertSame(101, $count);
+        // yesterday
+        $count = $this->StatsCounts->getObjectStat('Stats.Tests.open', 'day', new DateTime('-1 day'));
+        $this->assertSame(0, $count);
+
+        // week
+        $count = $this->StatsCounts->getObjectStat('Stats.Tests.open', 'week');
+        $this->assertSame(701, $count);
+        // last week
+        $count = $this->StatsCounts->getObjectStat('Stats.Tests.open', 'week', new DateTime('-1 week'));
+        $this->assertSame(0, $count);
+
+        // month
+        $count = $this->StatsCounts->getObjectStat('Stats.Tests.open', 'month');
+        $this->assertSame(3001, $count);
+        // last month
+        $count = $this->StatsCounts->getObjectStat('Stats.Tests.open', 'month', new DateTime('-1 month'));
+        $this->assertSame(0, $count);
+
+        // year
+        $count = $this->StatsCounts->getObjectStat('Stats.Tests.open', 'year');
+        $this->assertSame(12001, $count);
+        // last year
+        $count = $this->StatsCounts->getObjectStat('Stats.Tests.open', 'year', new DateTime('-1 year'));
+        $this->assertSame(0, $count);
+
+        // test the list of stats.
+
+        // bad timeperiod
+        $this->expectException(CountsException::class);
+        $this->expectExceptionMessage('Invalid timeperiod: badtimeperiod');
+        $this->StatsCounts->getObjectStat('Stats.Tests.open', 'badtimeperiod');
+    }
+
+    /**
+     * Test getting a specific stat counts
+     *
+     * @uses \Fr3nch13\Stats\Model\Table\StatsCountsTable::getObjectStats()
+     * @return void
+     */
+    public function testGetObjectStats(): void
+    {
+        // now
+        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open');
+        $expected = [
+            'year' => 12001,
+            'month' => 3001,
+            'week' => 701,
+            'day' => 101,
+            'hour' => 11,
+        ];
+        $this->assertSame($expected, $counts);
+
+        // last hour
+        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open', new DateTime('-1 hour'));
+        $expected = [
+            'year' => 12001,
+            'month' => 3001,
+            'week' => 701,
+            'day' => 101,
+            'hour' => 0,
+        ];
+        $this->assertSame($expected, $counts);
+
+        // yesterday
+        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open', new DateTime('-1 day'));
+        $expected = [
+            'year' => 12001,
+            'month' => 3001,
+            'week' => 701,
+            'day' => 0,
+            'hour' => 0,
+        ];
+        $this->assertSame($expected, $counts);
+
+        // last week
+        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open', new DateTime('-1 week'));
+        $expected = [
+            'year' => 12001,
+            'month' => 3001,
+            'week' => 0,
+            'day' => 0,
+            'hour' => 0,
+        ];
+        $this->assertSame($expected, $counts);
+
+        // last month
+        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open', new DateTime('-1 month'));
+        $expected = [
+            'year' => 12001,
+            'month' => 0,
+            'week' => 0,
+            'day' => 0,
+            'hour' => 0,
+        ];
+        $this->assertSame($expected, $counts);
+
+        // last year
+        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open', new DateTime('-1 year'));
+        $expected = [
+            'year' => 0,
+            'month' => 0,
+            'week' => 0,
+            'day' => 0,
+            'hour' => 0,
+        ];
+        $this->assertSame($expected, $counts);
+
+        // bad timeperiod
+        $this->expectException(CountsException::class);
+        $this->expectExceptionMessage('Invalid timeperiod: badtimeperiod');
+        $this->StatsCounts->getObjectStat('Stats.Tests.open', 'badtimeperiod');
+    }
 }
