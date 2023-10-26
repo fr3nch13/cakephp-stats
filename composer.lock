@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bd3754f00034e76235526411ebd8556b",
+    "content-hash": "8aedd6bf7b4d050ed000b49356753c33",
     "packages": [
         {
             "name": "cakephp/cakephp",
-            "version": "5.x-dev",
+            "version": "5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "db1e4b976805d1c843e184c6657464105a1e42d5"
+                "reference": "2aa6661a093bc9d7980320f1aa2b5353b397d785"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/db1e4b976805d1c843e184c6657464105a1e42d5",
-                "reference": "db1e4b976805d1c843e184c6657464105a1e42d5",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/2aa6661a093bc9d7980320f1aa2b5353b397d785",
+                "reference": "2aa6661a093bc9d7980320f1aa2b5353b397d785",
                 "shasum": ""
             },
             "require": {
@@ -30,14 +30,14 @@
                 "laminas/laminas-httphandlerrunner": "^2.6",
                 "league/container": "^4.2",
                 "php": ">=8.1",
-                "psr/container": "^1.1 || ^2.0",
+                "psr/container": "^2.0",
                 "psr/http-client": "^1.0.2",
                 "psr/http-factory": "^1.0.2",
-                "psr/http-message": "^1.1 || ^2.0",
+                "psr/http-message": "^2.0",
                 "psr/http-server-handler": "^1.0.2",
                 "psr/http-server-middleware": "^1.0.2",
                 "psr/log": "^3.0",
-                "psr/simple-cache": "^2.0 || ^3.0"
+                "psr/simple-cache": "^3.0"
             },
             "provide": {
                 "psr/container-implementation": "^2.0",
@@ -66,7 +66,6 @@
             },
             "require-dev": {
                 "cakephp/cakephp-codesniffer": "^5.0",
-                "http-interop/http-factory-tests": "^2.0",
                 "mikey179/vfsstream": "^1.6.10",
                 "mockery/mockery": "^1.6",
                 "paragonie/csp-builder": "^2.3",
@@ -78,7 +77,6 @@
                 "lib-ICU": "To use locale-aware features in the I18n and Database packages",
                 "paragonie/csp-builder": "CSP builder, to use the CSP Middleware"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
@@ -123,7 +121,7 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/cakephp"
             },
-            "time": "2023-10-25T14:44:45+00:00"
+            "time": "2023-09-29T23:31:30+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -4299,18 +4297,9 @@
             "time": "2021-07-28T10:34:58+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "cakephp/cakephp",
-            "version": "5.9999999.9999999.9999999-dev",
-            "alias": "5.0.1",
-            "alias_normalized": "5.0.1.0"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "cakephp/cakephp": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
