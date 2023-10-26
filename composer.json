@@ -25,7 +25,6 @@
         "cakephp/plugin-installer": "~2.0"
     },
     "require-dev": {
-        "cakephp/cakephp": "5.x-dev as 5.0.1",
         "cakephp/cakephp-codesniffer": "~5.1",
         "phpstan/phpstan": "~1.10",
         "phpunit/phpunit": "~10.4",
