@@ -12,6 +12,7 @@ use Cake\I18n\DateTime;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Fr3nch13\Stats\Exception\CountsException;
 use Fr3nch13\Stats\Model\Entity\StatsObject;
 
 /**
@@ -19,13 +20,13 @@ use Fr3nch13\Stats\Model\Entity\StatsObject;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  * @property \Fr3nch13\Stats\Model\Table\StatsCountsTable&\Cake\ORM\Association\HasMany $StatsCounts
- * @method \Fr3nch13\Stats\Model\Entity\StatsObject get(mixed $primaryKey, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\StatsObject get(mixed $primaryKey, array $contain = [])
  * @method \Fr3nch13\Stats\Model\Entity\StatsObject newEntity($data = null, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsObject[] newobjects(array $data, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\StatsObject[] newEntities(array $data, array $options = [])
  * @method \Fr3nch13\Stats\Model\Entity\StatsObject|false save(\Fr3nch13\Stats\Model\Entity\StatsObject $entity, array $options = [])
  * @method \Fr3nch13\Stats\Model\Entity\StatsObject saveOrFail(\Fr3nch13\Stats\Model\Entity\StatsObject $entity, array $options = [])
  * @method \Fr3nch13\Stats\Model\Entity\StatsObject patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsObject[] patchobjects($objects, array $data, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\StatsObject[] patchEntities($entities, array $data, array $options = [])
  * @method \Fr3nch13\Stats\Model\Entity\StatsObject findOrCreate($search, callable $callback = null, array $options = [])
  */
 class StatsObjectsTable extends Table
@@ -132,6 +133,7 @@ class StatsObjectsTable extends Table
      * @param string $key The key/unique id of the Stats Entity.
      * @param array<string, mixed> $fields The different fields in a record.
      * @return \Fr3nch13\Stats\Model\Entity\StatsObject
+     * @throws \Fr3nch13\Stats\Exception\CountsException If any of the time periods are invalid
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @TODO Use a more specific Exception when the save fails
      */
@@ -143,18 +145,6 @@ class StatsObjectsTable extends Table
             unset($fields['count']);
         }
 
-        $timestamp = null;
-        if (isset($fields['timestamp'])) {
-            $timestamp = $fields['timestamp'];
-            unset($fields['timestamp']);
-        }
-
-        $timeperiods = null;
-        if (isset($fields['timeperiods']) && is_array($fields['timeperiods'])) {
-            $timeperiods = $fields['timeperiods'];
-            unset($fields['timeperiods']);
-        }
-
         $fields['key'] = $key;
         $fields = $this->fixVariables($fields);
 
@@ -163,10 +153,11 @@ class StatsObjectsTable extends Table
         if ($statsObject instanceof StatsObject) {
             $statsObject = $this->patchEntity($statsObject, $fields);
         } else {
+            $fields['okey'] = $key;
             $statsObject = $this->newEntity($fields);
         }
 
-        if ($statsObject->isDirty()) {
+        if ($statsObject->isDirty() || $statsObject->isNew()) {
             if ($statsObject->isNew() && !$statsObject->get('name')) {
                 $statsObject->set('name', str_replace('.', ' ', $statsObject->okey));
             }
@@ -180,6 +171,33 @@ class StatsObjectsTable extends Table
         // counts for each increment in the range, and then fills in the ones with an actual count.
         $counts = [];
         if ($count) {
+            $timestamp = null;
+            if (isset($fields['timestamp'])) {
+                $timestamp = $fields['timestamp'];
+                // make sure it's a valid time period
+                if (!$timestamp instanceof DateTime) {
+                    throw new CountsException(__('Invalid timestamp field'));
+                }
+                unset($fields['timestamp']);
+            }
+
+            $timeperiods = null;
+            if (isset($fields['timeperiods']) && is_array($fields['timeperiods'])) {
+                // make sure they're all valid time periods
+                foreach ($fields['timeperiods'] as $timeperiod) {
+
+                    // make sure it's a valid time period
+                    if (!in_array($timeperiod, $this->StatsCounts->getTimePeriods(), true)) {
+                        throw new CountsException(__('Invalid timeperiod: {0}', [
+                            $timeperiod,
+                        ]));
+                    }
+                }
+
+                $timeperiods = $fields['timeperiods'];
+                unset($fields['timeperiods']);
+            }
+
             $counts = $this->StatsCounts->addUpdateCount($statsObject, $count, $timestamp, $timeperiods);
         }
         $statsObject->stats_counts = $counts;

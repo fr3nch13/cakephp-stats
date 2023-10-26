@@ -66,7 +66,7 @@ class StatsPluginTest extends TestCase
         // test to make sure the listeners are registered.
         $listeners = $app->getEventManager()->listeners('Tickets.count');
         $this->assertCount(1, $listeners);
-        $listeners = $app->getEventManager()->listeners('Fr3nch13/Stats.count');
+        $listeners = $app->getEventManager()->listeners('Fr3nch13.Stats.count');
         $this->assertCount(1, $listeners);
     }
 

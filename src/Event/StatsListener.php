@@ -25,10 +25,10 @@ class StatsListener implements EventListenerInterface
     use LocatorAwareTrait;
 
     /**
-     * @var \Fr3nch13\Stats\Model\Table\StatsObjectsTable
+     * @var ?\Fr3nch13\Stats\Model\Table\StatsObjectsTable
      */
-    public StatsObjectsTable $StatsObjects;
-    
+    public ?StatsObjectsTable $StatsObjects = null;
+
     /**
      * Used to map the event names to their related methods.
      *
@@ -37,7 +37,7 @@ class StatsListener implements EventListenerInterface
     public function implementedEvents(): array
     {
         return [
-            'Fr3nch13/Stats.count' => 'recordCount',
+            'Fr3nch13.Stats.count' => 'recordCount',
         ];
     }
 

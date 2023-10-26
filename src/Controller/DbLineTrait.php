@@ -6,6 +6,7 @@ declare(strict_types=1);
  */
 namespace Fr3nch13\Stats\Controller;
 
+use Cake\Datasource\ModelAwareTrait;
 use Cake\Http\Response;
 use Cake\I18n\DateTime;
 use Cake\ORM\Table;
@@ -16,20 +17,18 @@ use Cake\Utility\Inflector;
  */
 trait DbLineTrait
 {
+    use ModelAwareTrait;
     /**
      * Performs the common DB Linegraph functions.
      *
-     * @param \Cake\ORM\Table $Table The Model Table.
      * @param array<string> $keys The keys to lookup.
      * @param mixed|null $range Go back x number of stats.
      * @param string|null $timeperiod The Interval for the line graph
      * @param string|null $title The title to use, if needed.
      * @param \Cake\I18n\DateTime|null $start The time that we want to start. Defaults to now.
-     * @param array<int> $ids The specific ids that we want to combine.
      * @return \Cake\Http\Response|null
      */
     public function dbLineCommon(
-        Table $Table,
         array $keys,
         mixed $range = null,
         ?string $timeperiod = null,
@@ -41,6 +40,7 @@ trait DbLineTrait
         if (!$range || !$timeperiod) {
             return $this->redirect(['action' => $this->getRequest()->getParam('action'), 7, 'day']);
         }
+        //$StatsObject =
 
         if (!$Table->behaviors()->has('Stats')) {
             $Table->addBehavior('Fr3nch13/Stats.Stats');

@@ -229,11 +229,7 @@ class StatsCountsTableTest extends TestCase
      */
     public function testEntity(): void
     {
-        $entity = $this->StatsCounts->get(1, [
-            'contain' => [
-                'StatsObjects',
-            ],
-        ]);
+        $entity = $this->StatsCounts->get(1, contain: ['StatsObjects']);
         $this->assertInstanceOf(StatsCount::class, $entity);
 
         $this->assertSame(1, $entity->id);
@@ -358,7 +354,6 @@ class StatsCountsTableTest extends TestCase
 
         // test 5
         $results = $this->StatsCounts->getTimestampRange($now, 5, 'hour');
-        debug($results);
         $this->assertIsArray($results);
         $this->assertCount(6, $results);
         $this->assertSame(intval($now->format('YmdH')), $results[0]);
@@ -400,7 +395,6 @@ class StatsCountsTableTest extends TestCase
 
         // existing entity
         $results = $this->StatsCounts->getObjectCounts('Stats.Tests.open', $now, 5, 'day');
-        debug($results);
         $this->assertIsArray($results);
         $this->assertTrue(isset($results['object']));
         $this->assertTrue(isset($results['counts']));

@@ -19,13 +19,13 @@ use Fr3nch13\Stats\Model\Entity\StatsObject;
  * StatsCounts Model
  *
  * @property \Fr3nch13\Stats\Model\Table\StatsObjectsTable&\Cake\ORM\Association\BelongsTo $StatsObjects
- * @method \Fr3nch13\Stats\Model\Entity\StatsCount get(mixed $primaryKey, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\StatsCount get(mixed $primaryKey, array $contain = [])
  * @method \Fr3nch13\Stats\Model\Entity\StatsCount newEntity($data = null, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsCount[] newobjects(array $data, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\StatsCount[] newEntities(array $data, array $options = [])
  * @method \Fr3nch13\Stats\Model\Entity\StatsCount|false save(\Fr3nch13\Stats\Model\Entity\StatsCount $entity, array $options = [])
  * @method \Fr3nch13\Stats\Model\Entity\StatsCount saveOrFail(\Fr3nch13\Stats\Model\Entity\StatsCount $entity, array $options = [])
  * @method \Fr3nch13\Stats\Model\Entity\StatsCount patchEntity(\Fr3nch13\Stats\Model\Entity\StatsCount $entity, array $data, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsCount[] patchobjects($objects, array $data, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\StatsCount[] patchEntities($entities, array $data, array $options = [])
  * @method \Fr3nch13\Stats\Model\Entity\StatsCount findOrCreate($search, callable $callback = null, array $options = [])
  */
 class StatsCountsTable extends Table
@@ -282,9 +282,7 @@ class StatsCountsTable extends Table
             ]));
         }
 
-        $object = $this->StatsObjects->find('byKey', [
-            'key' => $objectKey,
-        ])->first();
+        $object = $this->StatsObjects->find('byKey', key: $objectKey)->first();
 
         if (!$object) {
             // if the Object can't be found, create a dummy one.

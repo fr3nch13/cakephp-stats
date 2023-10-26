@@ -15,13 +15,13 @@ use Cake\ORM\Table;
 /**
  * Tickets Model
  *
- * @method \Fr3nch13\Stats\Model\Entity\Tickets get(mixed $primaryKey, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\Tickets get(mixed $primaryKey, array $contain = [])
  * @method \Fr3nch13\Stats\Model\Entity\Tickets newEntity($data = null, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\Tickets[] newobjects(array $data, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\Tickets[] newEntities(array $data, array $options = [])
  * @method \Fr3nch13\Stats\Model\Entity\Tickets|false save(\Fr3nch13\Stats\Model\Entity\Tickets $entity, array $options = [])
  * @method \Fr3nch13\Stats\Model\Entity\Tickets saveOrFail(\Fr3nch13\Stats\Model\Entity\Tickets $entity, array $options = [])
  * @method \Fr3nch13\Stats\Model\Entity\Tickets patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\Tickets[] patchobjects($objects, array $data, array $options = [])
+ * @method \Fr3nch13\Stats\Model\Entity\Tickets[] patchEntities($entities, array $data, array $options = [])
  * @method \Fr3nch13\Stats\Model\Entity\Tickets findOrCreate($search, callable $callback = null, array $options = [])
  */
 class TicketsTable extends Table
