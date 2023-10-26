@@ -24,7 +24,7 @@ trait ChartJsTrait
      * Performs the common chartJs Line graph.
      *
      * @param array<string> $keys The keys to lookup.
-     * @param mixed|null $range Go back x number of stats.
+     * @param int|null $range Go back x number of stats.
      * @param string|null $timeperiod The Interval for the line graph
      * @param string|null $title The title to use, if needed.
      * @param \Cake\I18n\DateTime|null $start The time that we want to start. Defaults to now.
@@ -35,8 +35,7 @@ trait ChartJsTrait
         ?int $range = null,
         ?string $timeperiod = null,
         ?string $title = null,
-        ?DateTime $start = null,
-        array $ids = []
+        ?DateTime $start = null
     ): ?Response {
         // redirect so the frontend url is correct.
         if (!$range || !$timeperiod) {

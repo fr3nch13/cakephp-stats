@@ -38,7 +38,7 @@ class TestsControllerTest extends TestCase
     {
         parent::setUp();
         Configure::write('debug', true);
-        $this->loadPlugins(['Fr3nch13/Stats']);
+        $this->loadPlugins(['Fr3nch13/Stats' => []]);
     }
 
     /**

@@ -17,12 +17,10 @@ declare(strict_types=1);
 namespace Fr3nch13\TestApp;
 
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
-use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
-use Fr3nch13\TestApp\Event\TicketsListener;
 
 /**
  * Application setup class.

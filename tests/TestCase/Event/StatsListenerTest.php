@@ -6,6 +6,7 @@ namespace Fr3nch13\Stats\Test\TestCase\Event;
 use Cake\Event\Event;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventList;
+use Cake\Event\EventManager;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use Fr3nch13\Stats\Event\StatsListener;
@@ -26,6 +27,11 @@ class StatsListenerTest extends TestCase
      * @var \Fr3nch13\Stats\Model\Table\StatsCountsTable
      */
     public $StatsCounts;
+
+    /**
+     * @var \Cake\Event\EventManager
+     */
+    public EventManager $eventManager;
 
     /**
      * Defines which fixtures we'll be using.
@@ -54,10 +60,14 @@ class StatsListenerTest extends TestCase
         $StatsCounts = $this->getTableLocator()->get('Fr3nch13/Stats.StatsCounts', $config);
         $this->StatsCounts = $StatsCounts;
 
+        /** @var \Cake\Event\EventManager $eventManager */
+        $eventManager = $this->getEventManager();
+        $this->eventManager = $eventManager;
+
         // track events
-        $this->getEventManager()->setEventList(new EventList());
+        $this->eventManager->setEventList(new EventList());
         // register the listener.
-        $this->getEventManager()->on(new StatsListener());
+        $this->eventManager->on(new StatsListener());
     }
 
     /**
@@ -89,11 +99,11 @@ class StatsListenerTest extends TestCase
             $i--;
         }
 
-        $this->getEventManager()->dispatch(new Event('Fr3nch13.Stats.count', $this, [
+        $this->eventManager->dispatch(new Event('Fr3nch13.Stats.count', $this, [
             'key' => 'Stats.Tests.newkey',
         ]));
 
-        $this->assertEventFired('Fr3nch13.Stats.count', $this->getEventManager());
+        $this->assertEventFired('Fr3nch13.Stats.count', $this->eventManager);
 
         // create object with counts
         $results = $this->StatsCounts->getObjectCounts('Stats.Tests.newkey', $now, 5, 'day');
@@ -152,12 +162,12 @@ class StatsListenerTest extends TestCase
             $i--;
         }
 
-        $this->getEventManager()->dispatch(new Event('Fr3nch13.Stats.count', $this, [
+        $this->eventManager->dispatch(new Event('Fr3nch13.Stats.count', $this, [
             'key' => 'Stats.Tests.newkey',
             'count' => 3,
         ]));
 
-        $this->assertEventFired('Fr3nch13.Stats.count', $this->getEventManager());
+        $this->assertEventFired('Fr3nch13.Stats.count', $this->eventManager);
 
         // create object with counts
         $results = $this->StatsCounts->getObjectCounts('Stats.Tests.newkey', $now, 5, 'day');

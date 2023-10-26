@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Fr3nch13\Stats\Model\Table;
 
 use Cake\I18n\DateTime;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Fr3nch13\Stats\Exception\CountsException;
@@ -100,12 +100,11 @@ class StatsObjectsTable extends Table
     /**
      * Find an Entity by it's key.
      *
-     * @param \Cake\ORM\Query<mixed> $query The query object to modify.
-     * @param array<mixed> $options The options either specific to this finder, or to pass through.
-     * @return \Cake\ORM\Query<mixed> Return the modified query object.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException if the 'key options isn't set, or is null.
+     * @param \Cake\ORM\Query\SelectQuery $query The query object to modify.
+     * @param string $key The key to try to find the object with.
+     * @return \Cake\ORM\Query\SelectQuery Return the modified query object.
      */
-    public function findByKey(Query $query, string $key): Query
+    public function findByKey(SelectQuery $query, string $key): SelectQuery
     {
         return $query->where([$this->getAlias() . '.okey' => $key]);
     }

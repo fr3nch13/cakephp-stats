@@ -25,7 +25,7 @@ class TestsController extends Controller
     /**
      * Dashboard Test Block
      *
-     * @param mixed|null $range Go back x number of stats.
+     * @param int|null $range Go back x number of stats.
      * @param string|null $timeperiod The Interval for the line graph
      * @return \Cake\Http\Response|null
      */

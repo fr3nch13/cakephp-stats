@@ -55,7 +55,7 @@ class StatsCountTest extends TestCase
     }
 
     /**
-     * Testing the _getBody() method.
+     * Testing the getTimestamp() method.
      */
     public function testGetTimestamp(): void
     {
@@ -63,6 +63,7 @@ class StatsCountTest extends TestCase
         $now = new DateTime();
         $stats_count = $this->StatsCounts->get(1);
         $this->assertInstanceOf(StatsCount::class, $stats_count);
+        $this->assertInstanceOf(DateTime::class, $stats_count->timestamp);
         $this->assertSame('hour', $stats_count->time_period);
         $this->assertSame((int)$now->format('YmdH'), $stats_count->time_stamp);
         $this->assertSame($now->year, $stats_count->timestamp->year);
@@ -76,6 +77,7 @@ class StatsCountTest extends TestCase
         $now = new DateTime();
         $stats_count = $this->StatsCounts->get(2);
         $this->assertInstanceOf(StatsCount::class, $stats_count);
+        $this->assertInstanceOf(DateTime::class, $stats_count->timestamp);
         $this->assertSame('day', $stats_count->time_period);
         $this->assertSame((int)$now->format('Ymd'), $stats_count->time_stamp);
         $this->assertSame($now->year, $stats_count->timestamp->year);
@@ -89,6 +91,7 @@ class StatsCountTest extends TestCase
         $now = new DateTime();
         $stats_count = $this->StatsCounts->get(3);
         $this->assertInstanceOf(StatsCount::class, $stats_count);
+        $this->assertInstanceOf(DateTime::class, $stats_count->timestamp);
         $this->assertSame('week', $stats_count->time_period);
         $this->assertSame((int)$now->format('YW'), $stats_count->time_stamp);
         $this->assertSame($now->year, $stats_count->timestamp->year);
@@ -101,6 +104,7 @@ class StatsCountTest extends TestCase
         $now = new DateTime();
         $stats_count = $this->StatsCounts->get(4);
         $this->assertInstanceOf(StatsCount::class, $stats_count);
+        $this->assertInstanceOf(DateTime::class, $stats_count->timestamp);
         $this->assertSame('month', $stats_count->time_period);
         $this->assertSame((int)$now->format('Ym'), $stats_count->time_stamp);
         $this->assertSame($now->year, $stats_count->timestamp->year);
@@ -113,6 +117,7 @@ class StatsCountTest extends TestCase
         $now = new DateTime();
         $stats_count = $this->StatsCounts->get(5);
         $this->assertInstanceOf(StatsCount::class, $stats_count);
+        $this->assertInstanceOf(DateTime::class, $stats_count->timestamp);
         $this->assertSame('year', $stats_count->time_period);
         $this->assertSame((int)$now->format('Y'), $stats_count->time_stamp);
         $this->assertSame($now->year, $stats_count->timestamp->year);

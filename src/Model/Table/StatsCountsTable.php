@@ -141,7 +141,7 @@ class StatsCountsTable extends Table
      * @param \Fr3nch13\Stats\Model\Entity\StatsObject $statsObject The entity this count will belong to.
      * @param int $time_count The count for this count instance/record.
      * @param \Cake\I18n\DateTime|null $timestamp The timestamp of the count being added/updated.
-     * @param array<int|string, string>|string $timeperiods The timeperiods to use for this count.
+     * @param array<int|string, string>|null $timeperiods The timeperiods to use for this count.
      * @return array<string,\Fr3nch13\Stats\Model\Entity\StatsCount> objects.
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @TODO Use a more specific Exception when the save fails
@@ -201,7 +201,7 @@ class StatsCountsTable extends Table
      * Creates the matrix of timestamps.
      *
      * @param \Cake\I18n\DateTime|null $timestamp The timestamp to generate the matrix from.
-     * @return array<string, string> The timestamp matrix.
+     * @return array<string, int> The timestamp matrix.
      */
     public function getTimeStamps(?DateTime $timestamp = null): array
     {
@@ -234,7 +234,7 @@ class StatsCountsTable extends Table
      * @param \Cake\I18n\DateTime $timestamp The stating point for the range
      * @param int $range The range length
      * @param string $timeperiod The type of range, (hours, days, months, etc)
-     * @return array<int, string> The calculated and generated matrix of dates/times.
+     * @return array<int, int> The calculated and generated matrix of dates/times.
      */
     public function getTimestampRange(DateTime $timestamp, int $range, string $timeperiod): array
     {
