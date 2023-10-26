@@ -45,7 +45,8 @@ class Application extends BaseApplication
             'autoload' => true,
         ]);
 
-        EventManager::instance()->on(new TicketsListener());
+        // How to do it in the application.php
+        /// EventManager::instance()->on(new TicketsListener());
     }
 
     /**

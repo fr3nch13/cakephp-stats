@@ -3,21 +3,13 @@ declare(strict_types=1);
 
 namespace Fr3nch13\Stats\Test\TestCase\Event;
 
-use ArgumentCountError;
-use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\Event;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventList;
-use Cake\Event\EventManager;
 use Cake\I18n\DateTime;
-use Cake\ORM\Association\HasMany;
-use Cake\ORM\Behavior\TimestampBehavior;
 use Cake\TestSuite\TestCase;
 use Fr3nch13\Stats\Event\StatsListener;
-use Fr3nch13\Stats\Exception\CountsException;
-use Fr3nch13\Stats\Model\Entity\StatsObject;
 use Fr3nch13\Stats\Model\Table\StatsCountsTable;
-use Fr3nch13\Stats\Model\Table\StatsObjectsTable;
 
 /**
  * Fr3nch13\Stats\Event\Stats\Event\StatsListener Test Case
@@ -86,8 +78,8 @@ class StatsListenerTest extends TestCase
 
         // no counts
         $i = 5;
-        foreach($results['counts'] as $key => $count) {
-            $stamp = intval($now->modify('-' . $i .' day')->format('Ymd'));
+        foreach ($results['counts'] as $key => $count) {
+            $stamp = intval($now->modify('-' . $i . ' day')->format('Ymd'));
             $this->assertSame($stamp, $key);
             $this->assertSame(0, $count->stats_object_id);
             $this->assertSame('day', $count->time_period);
@@ -103,7 +95,6 @@ class StatsListenerTest extends TestCase
 
         $this->assertEventFired('Fr3nch13.Stats.count', $this->getEventManager());
 
-
         // create object with counts
         $results = $this->StatsCounts->getObjectCounts('Stats.Tests.newkey', $now, 5, 'day');
         $this->assertIsArray($results);
@@ -114,8 +105,8 @@ class StatsListenerTest extends TestCase
         // 1 count will have been registered, and that was today.
         // the other ones are new/filler counts.
         $i = 5;
-        foreach($results['counts'] as $key => $count) {
-            $stamp = intval($now->modify('-' . $i .' day')->format('Ymd'));
+        foreach ($results['counts'] as $key => $count) {
+            $stamp = intval($now->modify('-' . $i . ' day')->format('Ymd'));
             $this->assertSame($stamp, $key);
             $this->assertSame(6, $count->stats_object_id);
             $this->assertSame('day', $count->time_period);
@@ -150,8 +141,8 @@ class StatsListenerTest extends TestCase
 
         // no counts
         $i = 5;
-        foreach($results['counts'] as $key => $count) {
-            $stamp = intval($now->modify('-' . $i .' day')->format('Ymd'));
+        foreach ($results['counts'] as $key => $count) {
+            $stamp = intval($now->modify('-' . $i . ' day')->format('Ymd'));
             $this->assertSame($stamp, $key);
             $this->assertSame(0, $count->stats_object_id);
             $this->assertSame('day', $count->time_period);
@@ -168,7 +159,6 @@ class StatsListenerTest extends TestCase
 
         $this->assertEventFired('Fr3nch13.Stats.count', $this->getEventManager());
 
-
         // create object with counts
         $results = $this->StatsCounts->getObjectCounts('Stats.Tests.newkey', $now, 5, 'day');
         $this->assertIsArray($results);
@@ -179,8 +169,8 @@ class StatsListenerTest extends TestCase
         // 1 count will have been registered, and that was today.
         // the other ones are new/filler counts.
         $i = 5;
-        foreach($results['counts'] as $key => $count) {
-            $stamp = intval($now->modify('-' . $i .' day')->format('Ymd'));
+        foreach ($results['counts'] as $key => $count) {
+            $stamp = intval($now->modify('-' . $i . ' day')->format('Ymd'));
             $this->assertSame($stamp, $key);
             $this->assertSame(6, $count->stats_object_id);
             $this->assertSame('day', $count->time_period);

@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Fr3nch13\Stats\Test\TestCase;
 
 use Cake\Core\Configure;
-use Cake\Core\PluginCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -64,8 +63,6 @@ class StatsPluginTest extends TestCase
         $this->assertSame(Configure::read('Stats.test'), 'TEST');
 
         // test to make sure the listeners are registered.
-        $listeners = $app->getEventManager()->listeners('Tickets.count');
-        $this->assertCount(1, $listeners);
         $listeners = $app->getEventManager()->listeners('Fr3nch13.Stats.count');
         $this->assertCount(1, $listeners);
     }

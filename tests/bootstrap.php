@@ -5,7 +5,6 @@ use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
-use Cake\TestSuite\Fixture\SchemaLoader;
 use Fr3nch13\Stats\StatsPlugin;
 use Migrations\TestSuite\Migrator;
 

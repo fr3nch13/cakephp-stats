@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Fr3nch13\Stats\Test\TestCase\Model\Entity;
 
+use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use Fr3nch13\Stats\Model\Entity\StatsCount;
 
@@ -59,7 +60,7 @@ class StatsCountTest extends TestCase
     public function testGetTimestamp(): void
     {
         // Hour
-        $now = new \Cake\I18n\DateTime();
+        $now = new DateTime();
         $stats_count = $this->StatsCounts->get(1);
         $this->assertInstanceOf(StatsCount::class, $stats_count);
         $this->assertSame('hour', $stats_count->time_period);
@@ -72,7 +73,7 @@ class StatsCountTest extends TestCase
         $this->assertSame($now->format('m/d/Y'), $stats_count->timestamp->i18nFormat('MM/dd/yyyy'));
 
         // Day
-        $now = new \Cake\I18n\DateTime();
+        $now = new DateTime();
         $stats_count = $this->StatsCounts->get(2);
         $this->assertInstanceOf(StatsCount::class, $stats_count);
         $this->assertSame('day', $stats_count->time_period);
@@ -85,7 +86,7 @@ class StatsCountTest extends TestCase
         $this->assertSame($now->format('m/d/Y'), $stats_count->timestamp->i18nFormat('MM/dd/yyyy'));
 
         // Week
-        $now = new \Cake\I18n\DateTime();
+        $now = new DateTime();
         $stats_count = $this->StatsCounts->get(3);
         $this->assertInstanceOf(StatsCount::class, $stats_count);
         $this->assertSame('week', $stats_count->time_period);
@@ -97,7 +98,7 @@ class StatsCountTest extends TestCase
         $this->assertSame(0, $stats_count->timestamp->hour);
 
         // Month
-        $now = new \Cake\I18n\DateTime();
+        $now = new DateTime();
         $stats_count = $this->StatsCounts->get(4);
         $this->assertInstanceOf(StatsCount::class, $stats_count);
         $this->assertSame('month', $stats_count->time_period);
@@ -109,7 +110,7 @@ class StatsCountTest extends TestCase
         $this->assertSame($now->format('m/01/Y'), $stats_count->timestamp->i18nFormat('MM/dd/yyyy'));
 
         // Year
-        $now = new \Cake\I18n\DateTime();
+        $now = new DateTime();
         $stats_count = $this->StatsCounts->get(5);
         $this->assertInstanceOf(StatsCount::class, $stats_count);
         $this->assertSame('year', $stats_count->time_period);

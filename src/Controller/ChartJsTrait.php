@@ -43,15 +43,13 @@ trait ChartJsTrait
             return $this->redirect(['action' => $this->getRequest()->getParam('action'), 7, 'day']);
         }
 
+        /** @var \Fr3nch13\Stats\Model\Table\StatsCountsTable $StatsCounts */
         $StatsCounts = $this->fetchModel(StatsCountsTable::class);
-
         $StatsCounts->checkTimePeriod($timeperiod);
 
         if (!$start) {
             $start = new DateTime();
         }
-
-        $oldKeys = $keys;
 
         $stats = $StatsCounts->getobjectsCounts($keys, $start, (int)$range, $timeperiod);
 
@@ -61,6 +59,7 @@ trait ChartJsTrait
             'timeperiod' => $timeperiod,
             'timeperiodPlural' => Inflector::pluralize($timeperiod),
             'range' => $range,
+            'timeperiods' => $StatsCounts->getTimePeriods(),
         ]);
 
         return null;

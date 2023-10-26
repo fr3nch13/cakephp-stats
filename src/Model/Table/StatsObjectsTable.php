@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Fr3nch13\Stats\Model\Table;
 
-use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\I18n\DateTime;
 use Cake\ORM\Query;
 use Cake\ORM\Table;

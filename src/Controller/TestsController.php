@@ -7,10 +7,8 @@ declare(strict_types=1);
 
 namespace Fr3nch13\Stats\Controller;
 
-use Cake\Http\Response;
-use Cake\I18n\DateTime;
 use Cake\Controller\Controller;
-use Fr3nch13\Stats\Controller\ChartJsTrait;
+use Cake\Http\Response;
 
 /**
  * Tests Controller

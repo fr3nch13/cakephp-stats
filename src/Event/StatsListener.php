@@ -10,9 +10,7 @@ namespace Fr3nch13\Stats\Event;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Fr3nch13\Stats\Model\Entity\StatsCount;
 use Fr3nch13\Stats\Model\Entity\StatsObject;
-use Fr3nch13\Stats\Model\Table\StatsCountsTable;
 use Fr3nch13\Stats\Model\Table\StatsObjectsTable;
 
 /**

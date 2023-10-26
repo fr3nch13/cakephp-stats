@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Fr3nch13\Stats\Test\TestCase\Model\Table;
 
 use ArgumentCountError;
-use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\I18n\DateTime;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Behavior\TimestampBehavior;
@@ -439,7 +438,7 @@ class StatsObjectsTableTest extends TestCase
 
         // valid count and bad timestamp
         $this->expectException(CountsException::class);
-        $entity = $this->StatsObjects->register('Stats.Tests.open', [
+        $this->StatsObjects->register('Stats.Tests.open', [
             'count' => 1,
             'timestamp' => 'not a datetime',
         ]);
@@ -478,7 +477,7 @@ class StatsObjectsTableTest extends TestCase
 
         // valid count and bad timeperiod
         $this->expectException(CountsException::class);
-        $entity = $this->StatsObjects->register('Stats.Tests.open', [
+        $this->StatsObjects->register('Stats.Tests.open', [
             'count' => 1,
             'timestamp' => $now,
             'timeperiods' => ['day', 'year', 'notaperiod'],
@@ -496,14 +495,14 @@ class StatsObjectsTableTest extends TestCase
         $now = new DateTime();
         $stats = [
             // existing
-            'Stats.Tests.open'=> [
-                'count'=> 1,
+            'Stats.Tests.open' => [
+                'count' => 1,
                 'timestamp' => $now,
                 'timeperiods' => ['day', 'year'],
             ],
             // existing
-            'Stats.Tests.newkey'=> [
-                'count'=> 1,
+            'Stats.Tests.newkey' => [
+                'count' => 1,
                 'timestamp' => $now,
             ],
         ];

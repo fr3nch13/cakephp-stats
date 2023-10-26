@@ -4,11 +4,8 @@ declare(strict_types=1);
 namespace Fr3nch13\Stats\Test\TestCase\Controller;
 
 use Cake\Core\Configure;
-use Fr3nch13\Stats\Exception\CountsException;
-use Fr3nch13\Stats\Model\Table\StatsCountsTable;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
-use Fr3nch13\TestApp\Application;
 
 /**
  * Uses the TestsController to test the ChartJsTrait
@@ -31,6 +28,7 @@ class TestsControllerTest extends TestCase
             'plugin.Fr3nch13/Stats.StatsObjects',
         ];
     }
+
     /**
      * setUp method
      *
@@ -60,7 +58,6 @@ class TestsControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseContains('<!-- START: Fr3nch13/Stats.element/chartjs/block-line -->');
         $this->assertResponseContains('<!-- END: Fr3nch13/Stats.element/chartjs/block-line -->');
-
 
         $this->assertResponseContains('const ctx = document.getElementById(');
         $this->assertResponseContains('        "data": [

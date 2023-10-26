@@ -296,7 +296,7 @@ class StatsCountsTableTest extends TestCase
         // test bad time period
         $this->expectException(CountsException::class);
         $this->expectExceptionMessage('Invalid timeperiod: badtimeperiod');
-        $results = $this->StatsCounts->addUpdateCount($entity, 5, new DateTime('+1 hour'), ['badtimeperiod']);
+        $this->StatsCounts->addUpdateCount($entity, 5, new DateTime('+1 hour'), ['badtimeperiod']);
     }
 
     /**
@@ -382,8 +382,8 @@ class StatsCountsTableTest extends TestCase
         $this->assertCount(6, $results['counts']);
 
         $i = 5;
-        foreach($results['counts'] as $key => $count) {
-            $stamp = intval($now->modify('-' . $i .' day')->format('Ymd'));
+        foreach ($results['counts'] as $key => $count) {
+            $stamp = intval($now->modify('-' . $i . ' day')->format('Ymd'));
             $this->assertSame($stamp, $key);
             $this->assertSame(0, $count->stats_object_id);
             $this->assertSame('day', $count->time_period);
@@ -401,8 +401,8 @@ class StatsCountsTableTest extends TestCase
         $this->assertCount(6, $results['counts']);
 
         $i = 5;
-        foreach($results['counts'] as $key => $count) {
-            $stamp = intval($now->modify('-' . $i .' day')->format('Ymd'));
+        foreach ($results['counts'] as $key => $count) {
+            $stamp = intval($now->modify('-' . $i . ' day')->format('Ymd'));
             $this->assertSame($stamp, $key);
             $this->assertSame(1, $count->stats_object_id);
             $this->assertSame('day', $count->time_period);
@@ -421,7 +421,7 @@ class StatsCountsTableTest extends TestCase
         // bad timeperiod
         $this->expectException(CountsException::class);
         $this->expectExceptionMessage('Invalid timeperiod: badtimeperiod');
-        $results = $this->StatsCounts->getObjectCounts('Stats.Tests.open', $now, 5, 'badtimeperiod');
+        $this->StatsCounts->getObjectCounts('Stats.Tests.open', $now, 5, 'badtimeperiod');
     }
 
     /**
@@ -446,7 +446,7 @@ class StatsCountsTableTest extends TestCase
         // bad timeperiod
         $this->expectException(CountsException::class);
         $this->expectExceptionMessage('Invalid timeperiod: badtimeperiod');
-        $results = $this->StatsCounts->getObjectsCounts([
+        $this->StatsCounts->getObjectsCounts([
             'Stats.Tests.newkey', // new
             'Stats.Tests.open', // existing
         ], $now, 5, 'badtimeperiod');
