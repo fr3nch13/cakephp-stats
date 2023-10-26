@@ -14,62 +14,39 @@ composer require fr3nch13/cakephp-stats
 
 ## Usage
 
-There are two main components of this plugin. The `StatsListener`, and the `StatsBehavior`. The `StatsListener` is designed to be triggered from within a `Model/Table` as it uses the `StatsBehavior` to save/update objects and their counts.
+This all revolves around the event listener [`StatsListener`](src/Event/StatsListener.php).
 
 To use this plugin, you need to extend the `StatsListener`, define your `objects` in it, and register your listener.
-As an example of how to extend the `StatsListener` and define your `objects`, see the: [`TestListener`](src/Event/TestListener.php). For more on how CakePHP 5 Events work, see [The Event System](https://book.cakephp.org/5/en/core-libraries/events.html)
+As an example of how to extend the `StatsListener` and define your `objects`.
+
+See [CakePHP's Event System](https://book.cakephp.org/5/en/core-libraries/events.html#events-system)
 
 src/Event/TestListener.php:
 ```php
 <?php
 declare(strict_types=1);
 
-namespace Fr3nch13\Stats\Event;
+namespace App\Event;
 
-class TestListener extends StatsListener
+use Cake\Event\Event;
+
+class ArticleListener extends StatsListener
 {
+    // Define your events here
     public function implementedEvents(): array
     {
-        $listeners = parent::implementedEvents();
-
-        $listeners += [
-            'Stats.Test.before' => 'checkAddBefore',
-            'Stats.Test.after' => 'checkAddAfter',
+        return [
+            'App.Article.hit' => 'onHit',
         ];
-
-        return $listeners;
     }
 
-    public function checkAddBefore(\Cake\Event\Event $event): bool
+    public function onHit(Event $event, int $articleId, int $count = 1): bool
     {
-        $this->setObjectPrefix('Stats.Test');
-        $objects = [];
-        $objects['total'] = [
-            'name' => __('Total'),
-            'color' => '#000000',
-        ];
-        $objects['new'] = [
-            'name' => __('New'),
-            'color' => '#0000FF',
-        ];
-        $objects['updated'] = [
-            'name' => __('Updated'),
-            'color' => '#FFFF00',
-        ];
+        // track if any articles were viewed
+        parent::recordCount($event, 'Articles.hits'); // leave out count to just increment by one.
 
-        $this->setobjects($objects);
-
-        return $this->onBefore($event);
-    }
-
-    public function checkAddAfter(\Cake\Event\Event $event): bool
-    {
-        $statsCounts = $event->getSubject()->statsCounts();
-        foreach ($statsCounts as $key => $count) {
-            $this->updateObjectCount($key, (int)$count);
-        }
-
-        return $this->onAfter($event);
+        // track the specific article
+        parent::recordCount($event, 'Articles.hits.' . $articleId, 1);
     }
 }
 
@@ -106,79 +83,66 @@ class StatsPlugin extends BasePlugin
 
 ```
 
-To trigger the onBefore and onAfter, you do it where ever you want to track the counts, like in a cron job, or something along those lines. The `StatsListener` also requires that you have a `statsCounts()` method as this is where the onAfter method will get the counts from. See: [`TestsTable`](src/Model/Table/TestsTable.php)'s `testStatsListener()` method on how to trigger the events.
 
-src/Model/Table/ExampleTable.php
+src/Controller/ArticlesController.php
 ```php
 <?php
 declare(strict_types=1);
 
-namespace Fr3nch13\Stats\Model\Table;
+namespace App\Controller;
 
 use Cake\Event\Event;
 
-class TestsTable extends \Cake\ORM\Table
+class ArticlesController extends AppController
 {
-    public $stats = [
-        'total' => 0,
-        'new' => 0,
-        'updated' => 0,
-    ];
-
-    /// other code
-
-    public function testStatsListener(): void
+    /**
+     * Example of how to register a hit
+     */
+    public function view(int $id): ?Response
     {
-        // trigger the onBefore()
-        $event = $this->getEventManager()->dispatch(new Event('Stats.Test.before', $this));
+        $article = $this->Articles->get($id);
 
-        // do stuff that updates the stats that match the same keys as your defined in your
-        // Listener::onBefore() method.
-        $this->stats['total'] = 10;
-        $this->stats['new'] = 5;
-        $this->stats['updated'] = 3;
-
-        // trigger the Fr3nch13\Stats\Event\TestListener::onAfter();
-        $this->getEventManager()->dispatch(new Event('Stats.Test.after', $this));
-    }
-
-    public function statsCounts(): array
-    {
-        // just return the stats
-        return $this->stats;
-
-        // or, if needed, do something to them before returniing them
+        // do this reight before rendering the view incase your code above throws an error,
+        // or redirects somewhere else.
+        $this->getEventManager()->dispatch(new \Cake\Event\Event('App.Article.hit', $this, [
+            'articleId' => $id,
+            'count' => 1,
+        ]));
     }
 }
 
 ```
 
-You can either include the `StatsBehavior` directly, like you would any other Behavior, but it's not needed as the `StatsListener` will add the behavior when it needs it. If you're using it within a Controller you can use the [`DbLineTrait`](src/Controller/DbLineTrait.php) which includes the `dbLineCommon()` method. This is a helper function for creating the view that displays the counts in a graph.
+To use the controller trait, you can do so like:
 
 See: [`TestsController`](src/Controller/TestsController.php).
 ```php
 <?php
 declare(strict_types=1);
 
-namespace Fr3nch13\Stats\Controller;
+namespace App\Controller;
+
+
 
 class TestsController extends AppController
 {
-    use DbLineTrait;
+    /**
+     * Used to do the common tasks for chartjs graphs.
+     */
+    use ChartJsTrait;
 
     // other code
 
-    public function dbLineTrait($range = null, ?string $timeperiod = null): ?\Cake\Http\Response
+    public function line(?int $range = null, ?string $timeperiod = null): ?Response
     {
         $keys = [
-            'Stats.Test.total',
-            'Stats.Test.new',
-            'Stats.Test.updated',
-            'Stats.Test.active,',
+            'Stats.Tests.open',
+            'Stats.Tests.closed',
+            'Stats.Tests.pending',
+            'Stats.Tests.nocounts',
         ];
 
-        // $this->Tests is the model that the behavior will be attached to.
-        return $this->dbLineCommon($this->Tests, $keys, $range, $timeperiod);
+        return $this->chartJsLine($keys, $range, $timeperiod);
     }
 
     // other code

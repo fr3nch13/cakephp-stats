@@ -5,7 +5,6 @@ use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
-use Cake\TestSuite\Fixture\SchemaLoader;
 use Fr3nch13\Stats\StatsPlugin;
 use Migrations\TestSuite\Migrator;
 
@@ -52,6 +51,14 @@ define('CONFIG', TEST_APP . 'config' . DS);
 require_once CORE_PATH . 'config/bootstrap.php';
 
 require CAKE . 'functions.php';
+print_r(TMP);
+// phpcs:disable
+@mkdir(LOGS);
+@mkdir(SESSIONS);
+@mkdir(CACHE);
+@mkdir(CACHE . 'views');
+@mkdir(CACHE . 'models');
+// phpcs:enable
 
 Configure::write('debug', true);
 Configure::write('App', [
@@ -90,7 +97,10 @@ if (!getenv('DB_URL')) {
 }
 ConnectionManager::setConfig('test', ['url' => getenv('DB_URL')]);
 
-Plugin::getCollection()->add(new StatsPlugin(['path' => ROOT . DS]));
+Plugin::getCollection()->add(new StatsPlugin([
+    'path' => ROOT . DS,
+    'routes' => true,
+]));
 
 Configure::write('Tests.Migrations', true);
 

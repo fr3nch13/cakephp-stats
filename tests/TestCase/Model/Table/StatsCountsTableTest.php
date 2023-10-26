@@ -262,28 +262,28 @@ class StatsCountsTableTest extends TestCase
         $this->assertTrue(isset($results['hour']));
 
         // make sure they got incremented by 1.
-        $this->assertSame(12001, $results['year']->time_count);
-        $this->assertSame(3001, $results['month']->time_count);
-        $this->assertSame(701, $results['week']->time_count);
-        $this->assertSame(101, $results['day']->time_count);
-        $this->assertSame(11, $results['hour']->time_count);
+        $this->assertSame(12002, $results['year']->time_count);
+        $this->assertSame(3002, $results['month']->time_count);
+        $this->assertSame(702, $results['week']->time_count);
+        $this->assertSame(102, $results['day']->time_count);
+        $this->assertSame(12, $results['hour']->time_count);
 
         // make sure they got incremented by 5.
         $results = $this->StatsCounts->addUpdateCount($entity, 5);
 
-        $this->assertSame(12006, $results['year']->time_count);
-        $this->assertSame(3006, $results['month']->time_count);
-        $this->assertSame(706, $results['week']->time_count);
-        $this->assertSame(106, $results['day']->time_count);
-        $this->assertSame(16, $results['hour']->time_count);
+        $this->assertSame(12007, $results['year']->time_count);
+        $this->assertSame(3007, $results['month']->time_count);
+        $this->assertSame(707, $results['week']->time_count);
+        $this->assertSame(107, $results['day']->time_count);
+        $this->assertSame(17, $results['hour']->time_count);
 
         // test a different time
         $results = $this->StatsCounts->addUpdateCount($entity, 5, new DateTime('+1 hour'));
 
-        $this->assertSame(12011, $results['year']->time_count);
-        $this->assertSame(3011, $results['month']->time_count);
-        $this->assertSame(711, $results['week']->time_count);
-        $this->assertSame(111, $results['day']->time_count);
+        $this->assertSame(12012, $results['year']->time_count);
+        $this->assertSame(3012, $results['month']->time_count);
+        $this->assertSame(712, $results['week']->time_count);
+        $this->assertSame(112, $results['day']->time_count);
         $this->assertSame(5, $results['hour']->time_count);
 
         // test only day timeperiods in array
@@ -291,12 +291,12 @@ class StatsCountsTableTest extends TestCase
         $this->assertIsArray($results);
         $this->assertSame(1, count($results));
 
-        $this->assertSame(116, $results['day']->time_count);
+        $this->assertSame(117, $results['day']->time_count);
 
         // test bad time period
         $this->expectException(CountsException::class);
         $this->expectExceptionMessage('Invalid timeperiod: badtimeperiod');
-        $results = $this->StatsCounts->addUpdateCount($entity, 5, new DateTime('+1 hour'), ['badtimeperiod']);
+        $this->StatsCounts->addUpdateCount($entity, 5, new DateTime('+1 hour'), ['badtimeperiod']);
     }
 
     /**
@@ -382,8 +382,8 @@ class StatsCountsTableTest extends TestCase
         $this->assertCount(6, $results['counts']);
 
         $i = 5;
-        foreach($results['counts'] as $key => $count) {
-            $stamp = intval($now->modify('-' . $i .' day')->format('Ymd'));
+        foreach ($results['counts'] as $key => $count) {
+            $stamp = intval($now->modify('-' . $i . ' day')->format('Ymd'));
             $this->assertSame($stamp, $key);
             $this->assertSame(0, $count->stats_object_id);
             $this->assertSame('day', $count->time_period);
@@ -401,15 +401,15 @@ class StatsCountsTableTest extends TestCase
         $this->assertCount(6, $results['counts']);
 
         $i = 5;
-        foreach($results['counts'] as $key => $count) {
-            $stamp = intval($now->modify('-' . $i .' day')->format('Ymd'));
+        foreach ($results['counts'] as $key => $count) {
+            $stamp = intval($now->modify('-' . $i . ' day')->format('Ymd'));
             $this->assertSame($stamp, $key);
             $this->assertSame(1, $count->stats_object_id);
             $this->assertSame('day', $count->time_period);
             $this->assertSame($stamp, $count->time_stamp);
             $count_count = 0;
             if ($i === 0) {
-                $count_count = 100;
+                $count_count = 101;
                 $this->assertFalse($count->isNew());
             } else {
                 $this->assertTrue($count->isNew());
@@ -421,7 +421,7 @@ class StatsCountsTableTest extends TestCase
         // bad timeperiod
         $this->expectException(CountsException::class);
         $this->expectExceptionMessage('Invalid timeperiod: badtimeperiod');
-        $results = $this->StatsCounts->getObjectCounts('Stats.Tests.open', $now, 5, 'badtimeperiod');
+        $this->StatsCounts->getObjectCounts('Stats.Tests.open', $now, 5, 'badtimeperiod');
     }
 
     /**
@@ -446,7 +446,7 @@ class StatsCountsTableTest extends TestCase
         // bad timeperiod
         $this->expectException(CountsException::class);
         $this->expectExceptionMessage('Invalid timeperiod: badtimeperiod');
-        $results = $this->StatsCounts->getObjectsCounts([
+        $this->StatsCounts->getObjectsCounts([
             'Stats.Tests.newkey', // new
             'Stats.Tests.open', // existing
         ], $now, 5, 'badtimeperiod');
