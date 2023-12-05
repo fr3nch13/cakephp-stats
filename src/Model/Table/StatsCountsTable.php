@@ -297,7 +297,7 @@ class StatsCountsTable extends Table
 
         //// calculate the range of timestamps that we need.
 
-        // get the calculated timestam range
+        // get the calculated timestamp range
         $range = $this->getTimestampRange($timestamp, $range, $timeperiod);
 
         // prefill the counts based on the range

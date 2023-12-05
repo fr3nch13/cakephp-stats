@@ -511,6 +511,7 @@ class StatsCountsTableTest extends TestCase
      */
     public function testGetObjectStats(): void
     {
+        $now = new DateTime();
         // now
         $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open');
         $expected = [
@@ -523,32 +524,44 @@ class StatsCountsTableTest extends TestCase
         $this->assertSame($expected, $counts);
 
         // last hour
-        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open', new DateTime('-1 hour'));
+        $hourAgo = new DateTime('-1 hour');
+        $sameYear = ($hourAgo->format('Y') === $now->format('Y'));
+        $sameMonth = ($hourAgo->format('Ym') === $now->format('Ym'));
+        $sameWeek = ($hourAgo->format('YW') === $now->format('YW'));
+        $sameDay = ($hourAgo->format('Ymd') === $now->format('Ymd'));
+        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open', $hourAgo);
         $expected = [
-            'year' => 12001,
-            'month' => 3001,
-            'week' => 701,
-            'day' => 101,
+            'year' => $sameYear ? 12001 : 0,
+            'month' => $sameMonth ? 3001 : 0,
+            'week' => $sameWeek ? 701 : 0,
+            'day' => $sameDay ? 101 : 0,
             'hour' => 0,
         ];
         $this->assertSame($expected, $counts);
 
         // yesterday
-        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open', new DateTime('-1 day'));
+        $dayAgo = new DateTime('-1 day');
+        $sameYear = ($dayAgo->format('Y') === $now->format('Y'));
+        $sameMonth = ($dayAgo->format('Ym') === $now->format('Ym'));
+        $sameWeek = ($dayAgo->format('YW') === $now->format('YW'));
+        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open', $dayAgo);
         $expected = [
-            'year' => 12001,
-            'month' => 3001,
-            'week' => 701,
+            'year' => $sameYear ? 12001 : 0,
+            'month' => $sameMonth ? 3001 : 0,
+            'week' => $sameWeek ? 701 : 0,
             'day' => 0,
             'hour' => 0,
         ];
         $this->assertSame($expected, $counts);
 
         // last week
-        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open', new DateTime('-1 week'));
+        $weekAgo = new DateTime('-1 week');
+        $sameYear = ($weekAgo->format('Y') === $now->format('Y'));
+        $sameMonth = ($weekAgo->format('Ym') === $now->format('Ym'));
+        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open', $weekAgo);
         $expected = [
-            'year' => 12001,
-            'month' => 3001,
+            'year' => $sameYear ? 12001 : 0,
+            'month' => $sameMonth ? 3001 : 0,
             'week' => 0,
             'day' => 0,
             'hour' => 0,
@@ -556,9 +569,11 @@ class StatsCountsTableTest extends TestCase
         $this->assertSame($expected, $counts);
 
         // last month
-        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open', new DateTime('-1 month'));
+        $monthAgo = new DateTime('-1 month');
+        $sameYear = ($weekAgo->format('Y') === $now->format('Y'));
+        $counts = $this->StatsCounts->getObjectStats('Stats.Tests.open', $monthAgo);
         $expected = [
-            'year' => 12001,
+            'year' => $sameYear ? 12001 : 0,
             'month' => 0,
             'week' => 0,
             'day' => 0,
