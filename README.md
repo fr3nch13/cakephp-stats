@@ -1,4 +1,9 @@
-# Stats
+# CakePHP Stats Plugin
+
+[![Build Status](https://github.com/fr3nch13/cakephp-stats/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fr3nch13/cakephp-stats/actions/workflows/ci.yml)
+[![Total Downloads](https://img.shields.io/packagist/dt/fr3nch13/cakephp-stats.svg?style=flat-square)](https://packagist.org/packages/fr3nch13/cakephp-stats)
+[![PHPStan](https://img.shields.io/badge/PHPStan-level%208-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
+[![codecov](https://codecov.io/gh/fr3nch13/cakephp-stats/graph/badge.svg?token=xHC0xjLXxq)](https://codecov.io/gh/fr3nch13/cakephp-stats)
 
 Used to track and display statistics, and Trends.
 
@@ -22,6 +27,7 @@ As an example of how to extend the `StatsListener` and define your `objects`.
 See [CakePHP's Event System](https://book.cakephp.org/5/en/core-libraries/events.html#events-system)
 
 src/Event/TestListener.php:
+
 ```php
 <?php
 declare(strict_types=1);
@@ -57,6 +63,7 @@ class ArticleListener extends StatsListener
 Once you've created your Listener that has been extended from the `StatsListener`, you need to register it. In either your `Application.php` (if you're directly using it within an app), or your `Plugin.php` (if your using this within another plugin), you need to Use the EventManager to register your Listener in the `bootstrap()` method. For an example, See: [`StatsPlugin.php`](src/StatsPlugin.php)'s `bootstrap()`.
 
 src/BlogPlugin.php
+
 ```php
 <?php
 declare(strict_types=1);
@@ -86,8 +93,8 @@ class BlogPlugin extends BasePlugin
 
 ```
 
-
 src/Controller/ArticlesController.php
+
 ```php
 <?php
 declare(strict_types=1);
@@ -122,6 +129,7 @@ To use the controller trait, you can do so like:
 See: [`TestsController`](src/Controller/TestsController.php).
 
 src/Controller/Admin/ArticlesController.php
+
 ```php
 <?php
 declare(strict_types=1);

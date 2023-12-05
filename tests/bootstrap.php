@@ -51,7 +51,6 @@ define('CONFIG', TEST_APP . 'config' . DS);
 require_once CORE_PATH . 'config/bootstrap.php';
 
 require CAKE . 'functions.php';
-print_r(TMP);
 // phpcs:disable
 @mkdir(LOGS);
 @mkdir(SESSIONS);
