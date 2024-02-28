@@ -9,6 +9,10 @@
 /coverage/*
 !*.gitkeep
 
+# ignore the composer.lock file as
+# this plugin should work with a borader set of requirements.
+/composer.lock
+
 # OS generated files #
 ######################
 .DS_Store
