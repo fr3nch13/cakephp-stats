@@ -18,6 +18,9 @@ indent_size = 2
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+[*.php]
+php_diagnostic_php6601 = false
+
 [*.twig]
 insert_final_newline = false
 

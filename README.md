@@ -1,17 +1,10 @@
 # CakePHP Stats Plugin
 
-[![Build Status](https://github.com/fr3nch13/cakephp-stats/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fr3nch13/cakephp-stats/actions/workflows/ci.yml)
-[![Total Downloads](https://img.shields.io/packagist/dt/fr3nch13/cakephp-stats.svg?style=flat-square)](https://packagist.org/packages/fr3nch13/cakephp-stats)
-[![PHPStan](https://img.shields.io/badge/PHPStan-level%208-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
-[![codecov](https://codecov.io/gh/fr3nch13/cakephp-stats/graph/badge.svg?token=xHC0xjLXxq)](https://codecov.io/gh/fr3nch13/cakephp-stats)
-
-Used to track and display statistics, and Trends.
+Track event-driven statistics and render Chart.js line charts in CakePHP applications.
 
 ## Installation
 
-You can install this plugin into your CakePHP application using [composer](http://getcomposer.org).
-
-The recommended way to install composer packages is:
+Install the plugin with [Composer](https://getcomposer.org/):
 
 ```bash
 composer require fr3nch13/cakephp-stats
@@ -19,14 +12,13 @@ composer require fr3nch13/cakephp-stats
 
 ## Usage
 
-This all revolves around the event listener [`StatsListener`](src/Event/StatsListener.php).
+Statistics are recorded through the [`StatsListener`](src/Event/StatsListener.php). Create an application listener that extends it and maps your application's events to listener methods.
 
-To use this plugin, you need to extend the `StatsListener`, and define your `StatsObject` `keys` in it.
-As an example of how to extend the `StatsListener` and define your `objects`.
+See [CakePHP's event system](https://book.cakephp.org/5/en/core-libraries/events.html) for more on dispatching and handling events.
 
-See [CakePHP's Event System](https://book.cakephp.org/5/en/core-libraries/events.html#events-system)
+### Create A Listener
 
-src/Event/TestListener.php:
+`src/Event/ArticleListener.php`
 
 ```php
 <?php
@@ -35,10 +27,10 @@ declare(strict_types=1);
 namespace App\Event;
 
 use Cake\Event\Event;
+use Fr3nch13\Stats\Event\StatsListener;
 
 class ArticleListener extends StatsListener
 {
-    // Define your events here
     public function implementedEvents(): array
     {
         return [
@@ -46,63 +38,61 @@ class ArticleListener extends StatsListener
         ];
     }
 
-    public function onHit(Event $event, int $articleId, int $count = 1): bool
+    public function onHit(Event $event, int $articleId, int $count = 1): void
     {
-        // track if any articles were viewed
-        // Article.hits is a StatsObject key.
-        parent::recordCount($event, 'Articles.hits'); // leave out count to just increment by one.
+        // Track all article views.
+        parent::recordCount($event, 'Articles.hits', $count);
 
-        // track the specific article
-        // Article.hits.[id] is a seperate StatsObject key from above.
+        // Track views for this specific article.
         parent::recordCount($event, 'Articles.hits.' . $articleId, $count);
     }
 }
-
 ```
 
-Once you've created your Listener that has been extended from the `StatsListener`, you need to register it. In either your `Application.php` (if you're directly using it within an app), or your `Plugin.php` (if your using this within another plugin), you need to Use the EventManager to register your Listener in the `bootstrap()` method. For an example, See: [`StatsPlugin.php`](src/StatsPlugin.php)'s `bootstrap()`.
+`recordCount()` stores the last registered `StatsObject` on the event result. It does not return the object directly; use `$event->getResult()` after dispatching when you need it.
 
-src/BlogPlugin.php
+### Register The Listener
+
+Register the listener during your application or plugin bootstrap.
+
+`src/Application.php`
 
 ```php
 <?php
 declare(strict_types=1);
 
-namespace Fr3nch13\Blog;
+namespace App;
 
-use Cake\Core\BasePlugin;
-use Cake\Core\PluginApplicationInterface;
+use App\Event\ArticleListener;
 use Cake\Event\EventManager;
-use Fr3nch13\Stats\Event\TestListener;
+use Cake\Http\BaseApplication;
 
-
-class BlogPlugin extends BasePlugin
+class Application extends BaseApplication
 {
-    // other code
-
-    public function bootstrap(PluginApplicationInterface $app): void
+    public function bootstrap(): void
     {
-        // Register your listener with the Event Manager
+        parent::bootstrap();
+
         EventManager::instance()->on(new ArticleListener());
-
-        parent::bootstrap($app);
     }
-
-    /// other code
 }
-
 ```
 
-src/Controller/ArticlesController.php
+### Record A Statistic
+
+Dispatch the application event after the work that can fail or redirect has completed.
+
+`src/Controller/ArticlesController.php`
 
 ```php
 <?php
 declare(strict_types=1);
 
-namespace Fr3nch13\Blog\Controller;
+namespace App\Controller;
 
+use App\Controller\AppController;
 use Cake\Event\Event;
-use Fr3nch13\Blog\AppController;
+use Cake\Http\Response;
 
 class ArticlesController extends AppController
 {
@@ -113,40 +103,36 @@ class ArticlesController extends AppController
     {
         $article = $this->Articles->get($id);
 
-        // do this reight before rendering the view incase your code above throws an error,
-        // or redirects somewhere else.
+        // Dispatch this immediately before rendering so an earlier error or redirect does not record a view.
         $this->getEventManager()->dispatch(new Event('App.Article.hit', $this, [
             'articleId' => $id,
             'count' => 1,
         ]));
+
+        return null;
     }
 }
-
 ```
 
-To use the controller trait, you can do so like:
+### Render A Chart
 
-See: [`TestsController`](src/Controller/TestsController.php).
+Use [`ChartJsTrait`](src/Controller/ChartJsTrait.php) in a controller action. When `$range` or `$timeperiod` is omitted, the trait redirects to a URL with the defaults of seven days.
 
-src/Controller/Admin/ArticlesController.php
+`src/Controller/Admin/ArticlesController.php`
 
 ```php
 <?php
 declare(strict_types=1);
 
-namespace Fr3nch13\Blog\Admin\Controller;
+namespace App\Controller\Admin;
 
+use App\Controller\AppController;
+use Cake\Http\Response;
 use Fr3nch13\Stats\Controller\ChartJsTrait;
-use Fr3nch13\Blog\Admin\AppController;
 
 class ArticlesController extends AppController
 {
-    /**
-     * Used to do the common tasks for chartjs graphs.
-     */
     use ChartJsTrait;
-
-    // other code
 
     public function line(?int $range = null, ?string $timeperiod = null): ?Response
     {
@@ -159,8 +145,24 @@ class ArticlesController extends AppController
 
         return $this->chartJsLine($keys, $range, $timeperiod);
     }
+}
+```
 
-    // other code
+### Read Statistics
+
+Retrieve aggregate counts directly from the plugin table when building an API response or dashboard.
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use App\Controller\AppController;
+use Cake\Http\Response;
+
+class ArticlesController extends AppController
+{
 
     /**
      * To get the stats in a dashboard
@@ -172,18 +174,7 @@ class ArticlesController extends AppController
         /** @var \Fr3nch13\Stats\Model\Table\StatsCountsTable $StatsCounts */
         $StatsCounts = $this->getTableLocator()->get('Fr3nch13/Stats.StatsCounts');
 
-        $stats = $this->StatsCounts->getObjectStats('Articles.hits');
-
-        /*
-        $stats will look like:
-        $stats = [
-            'year' => 12001, <-- counts
-            'month' => 3001,
-            'week' => 701,
-            'day' => 101,
-            'hour' => 11,
-        ];
-        */
+        $stats = $StatsCounts->getObjectStats('Articles.hits');
 
         $this->set(compact('stats'));
         $this->viewBuilder()->setOption('serialize', ['stats']);
@@ -191,5 +182,4 @@ class ArticlesController extends AppController
         return null;
     }
 }
-
 ```
