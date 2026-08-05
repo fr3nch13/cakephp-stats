@@ -100,3 +100,23 @@ jobs:
       with:
         files: ./coverage.xml
         verbose: true
+
+  required-checks:
+    name: Required checks
+    needs:
+    - quality
+    - testsuite
+    - coverage-php
+    if: always()
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Verify required jobs
+      env:
+        QUALITY_RESULT: ${{ needs.quality.result }}
+        TESTSUITE_RESULT: ${{ needs.testsuite.result }}
+        COVERAGE_RESULT: ${{ needs.coverage-php.result }}
+      run: |
+        test "$QUALITY_RESULT" = success
+        test "$TESTSUITE_RESULT" = success
+        test "$COVERAGE_RESULT" = success
