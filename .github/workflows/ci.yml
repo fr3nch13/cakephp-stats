@@ -38,7 +38,7 @@ jobs:
         coverage: none
 
     - name: Composer install
-      uses: ramsey/composer-install@v3
+      uses: ramsey/composer-install@v4
 
     - name: Run checks
       run: |
@@ -67,7 +67,7 @@ jobs:
         coverage: none
 
     - name: Composer install
-      uses: ramsey/composer-install@v3
+      uses: ramsey/composer-install@v4
 
     - name: Run PHPUnit
       run: composer run-script test
@@ -88,7 +88,7 @@ jobs:
         coverage: xdebug
 
     - name: Composer install
-      uses: ramsey/composer-install@v3
+      uses: ramsey/composer-install@v4
 
     - name: Run PHPUnit
       run: composer run-script coverage-clover
