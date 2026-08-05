@@ -38,10 +38,12 @@ class Application extends BaseApplication
         // Call parent to load bootstrap from files.
         parent::bootstrap();
 
-        $this->addPlugin('Fr3nch13/Stats', [
-            'path' => ROOT . DS,
-            'autoload' => true,
-        ]);
+        if (!$this->getPlugins()->has('Fr3nch13/Stats')) {
+            $this->addPlugin('Fr3nch13/Stats', [
+                'path' => ROOT . DS,
+                'autoload' => true,
+            ]);
+        }
 
         // How to do it in the application.php
         /// EventManager::instance()->on(new TicketsListener());

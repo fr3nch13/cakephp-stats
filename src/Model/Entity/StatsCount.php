@@ -71,7 +71,7 @@ class StatsCount extends Entity
                     (int)substr($time_stamp, 0, 4),
                     (int)substr($time_stamp, 4, 2),
                     (int)substr($time_stamp, 6, 2),
-                    (int)substr($time_stamp, 8, 2)
+                    (int)substr($time_stamp, 8, 2),
                 );
                 break;
             case 'day':
@@ -79,7 +79,7 @@ class StatsCount extends Entity
                     (int)substr($time_stamp, 0, 4),
                     (int)substr($time_stamp, 4, 2),
                     (int)substr($time_stamp, 6, 2),
-                    0
+                    0,
                 );
                 break;
             case 'week':
@@ -92,7 +92,7 @@ class StatsCount extends Entity
                     (int)substr($date, 0, 4),
                     (int)substr($date, 4, 2),
                     (int)substr($date, 6, 2),
-                    0
+                    0,
                 );
                 break;
             case 'month':
@@ -100,7 +100,7 @@ class StatsCount extends Entity
                     (int)substr($time_stamp, 0, 4),
                     (int)substr($time_stamp, 4, 2),
                     1,
-                    0
+                    0,
                 );
                 break;
             case 'year':
@@ -108,7 +108,7 @@ class StatsCount extends Entity
                     (int)substr($time_stamp, 0, 4),
                     1,
                     1,
-                    0
+                    0,
                 );
                 break;
         }
