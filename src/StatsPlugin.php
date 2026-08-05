@@ -61,7 +61,7 @@ class StatsPlugin extends BasePlugin
                     $routes->fallbacks(DashedRoute::class);
                 });
                 $routes->fallbacks(DashedRoute::class);
-            }
+            },
         );
 
         // By default will load `config/routes.php` in the plugin.

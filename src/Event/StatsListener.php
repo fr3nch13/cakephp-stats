@@ -10,7 +10,6 @@ namespace Fr3nch13\Stats\Event;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Fr3nch13\Stats\Model\Entity\StatsObject;
 use Fr3nch13\Stats\Model\Table\StatsObjectsTable;
 
 /**
@@ -42,12 +41,12 @@ class StatsListener implements EventListenerInterface
     /**
      * The main entry point into the Event.
      *
-     * @param \Cake\Event\Event $event The triggered event.
+     * @param \Cake\Event\Event<object> $event The triggered event.
      * @param string $key The StatsObject key
      * @param int $count The count to register, defaults to 1
-     * @return \Fr3nch13\Stats\Model\Entity\StatsObject The object with the attached counts, if count > 0
+     * @return void
      */
-    public function recordCount(Event $event, string $key, int $count = 1): StatsObject
+    public function recordCount(Event $event, string $key, int $count = 1): void
     {
         if (!$this->StatsObjects) {
             $config = $this->getTableLocator()->exists('StatsObjects') ? [] : ['className' => StatsObjectsTable::class];
@@ -60,6 +59,6 @@ class StatsListener implements EventListenerInterface
         $object = $this->StatsObjects->register($key, ['count' => $count]);
 
         // record the counts.
-        return $object;
+        $event->setResult($object);
     }
 }

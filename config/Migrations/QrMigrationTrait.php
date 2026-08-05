@@ -4,15 +4,10 @@ declare(strict_types=1);
 namespace Fr3nch13\Stats\Migrations;
 
 use Cake\Console\ConsoleIo;
-use Phinx\Db\Adapter\MysqlAdapter;
+use Migrations\Db\Adapter\MysqlAdapter;
 
 trait QrMigrationTrait
 {
-    /**
-     * @var \Cake\Console\ConsoleIo console object
-     */
-    public $io;
-
     /**
      * Makes the I/O object
      *

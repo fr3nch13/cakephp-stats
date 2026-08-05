@@ -18,15 +18,8 @@ use Fr3nch13\Stats\Model\Entity\StatsObject;
  * StatsObjects Model
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
- * @property \Fr3nch13\Stats\Model\Table\StatsCountsTable&\Cake\ORM\Association\HasMany $StatsCounts
- * @method \Fr3nch13\Stats\Model\Entity\StatsObject get(mixed $primaryKey, array $contain = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsObject newEntity($data = null, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsObject[] newEntities(array $data, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsObject|false save(\Fr3nch13\Stats\Model\Entity\StatsObject $entity, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsObject saveOrFail(\Fr3nch13\Stats\Model\Entity\StatsObject $entity, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsObject patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsObject[] patchEntities($entities, array $data, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsObject findOrCreate($search, callable $callback = null, array $options = [])
+ * @property \Cake\ORM\Association\HasMany<\Fr3nch13\Stats\Model\Table\StatsCountsTable> $StatsCounts
+ * @extends \Cake\ORM\Table<array{Timestamp: \Cake\ORM\Behavior\TimestampBehavior}, \Fr3nch13\Stats\Model\Entity\StatsObject>
  */
 class StatsObjectsTable extends Table
 {
@@ -100,9 +93,9 @@ class StatsObjectsTable extends Table
     /**
      * Find an Entity by it's key.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query The query object to modify.
+     * @param \Cake\ORM\Query\SelectQuery<\Fr3nch13\Stats\Model\Entity\StatsObject> $query The query object to modify.
      * @param string $key The key to try to find the object with.
-     * @return \Cake\ORM\Query\SelectQuery Return the modified query object.
+     * @return \Cake\ORM\Query\SelectQuery<\Fr3nch13\Stats\Model\Entity\StatsObject> Return the modified query object.
      */
     public function findByKey(SelectQuery $query, string $key): SelectQuery
     {

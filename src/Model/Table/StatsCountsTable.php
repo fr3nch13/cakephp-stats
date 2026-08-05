@@ -19,15 +19,8 @@ use Fr3nch13\Stats\Model\Entity\StatsObject;
 /**
  * StatsCounts Model
  *
- * @property \Fr3nch13\Stats\Model\Table\StatsObjectsTable&\Cake\ORM\Association\BelongsTo $StatsObjects
- * @method \Fr3nch13\Stats\Model\Entity\StatsCount get(mixed $primaryKey, array $contain = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsCount newEntity($data = null, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsCount[] newEntities(array $data, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsCount|false save(\Fr3nch13\Stats\Model\Entity\StatsCount $entity, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsCount saveOrFail(\Fr3nch13\Stats\Model\Entity\StatsCount $entity, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsCount patchEntity(\Fr3nch13\Stats\Model\Entity\StatsCount $entity, array $data, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsCount[] patchEntities($entities, array $data, array $options = [])
- * @method \Fr3nch13\Stats\Model\Entity\StatsCount findOrCreate($search, callable $callback = null, array $options = [])
+ * @property \Cake\ORM\Association\BelongsTo<\Fr3nch13\Stats\Model\Table\StatsObjectsTable> $StatsObjects
+ * @extends \Cake\ORM\Table<array{}, \Fr3nch13\Stats\Model\Entity\StatsCount>
  */
 class StatsCountsTable extends Table
 {
@@ -263,21 +256,21 @@ class StatsCountsTable extends Table
      * @param \Cake\I18n\DateTime $timestamp The date that we should start at, if null, then today will be used.
      * @param int $range How far we should go back in $timeperiod.
      * @param string $timeperiod The timeperiod we should use. see \Fr3nch13\Stats\Model\Table\StatsCounts::$time_periods.
-     * @return array<string, array<mixed>>|null Returns the entity and it's counts.
+     * @return array{object: \Fr3nch13\Stats\Model\Entity\StatsObject, counts: array<int, \Fr3nch13\Stats\Model\Entity\StatsCount>} Returns the entity and its counts.
      */
     public function getObjectCounts(
         string $objectKey,
         DateTime $timestamp,
         int $range,
-        string $timeperiod
-    ): ?array {
+        string $timeperiod,
+    ): array {
         // make sure it's a valid time period
 
         $this->checkTimePeriod($timeperiod);
 
         $object = $this->StatsObjects->find('byKey', key: $objectKey)->first();
 
-        if (!$object) {
+        if (!$object instanceof StatsObject) {
             // if the Object can't be found, create a dummy one.
             $object = $this->StatsObjects->newEntity([
                 'key' => $objectKey,
@@ -342,7 +335,7 @@ class StatsCountsTable extends Table
         array $objectKeys,
         DateTime $timestamp,
         int $range,
-        string $timeperiod
+        string $timeperiod,
     ): array {
         $return = [];
 
@@ -381,7 +374,7 @@ class StatsCountsTable extends Table
     public function getObjectStat(
         string $key,
         string $timeperiod,
-        ?DateTime $timestamp = null
+        ?DateTime $timestamp = null,
     ): int {
         if (!$timestamp) {
             $timestamp = new DateTime();
@@ -409,7 +402,7 @@ class StatsCountsTable extends Table
      */
     public function getObjectStats(
         string $key,
-        ?DateTime $timestamp = null
+        ?DateTime $timestamp = null,
     ): array {
         if (!$timestamp) {
             $timestamp = new DateTime();

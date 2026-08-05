@@ -6,14 +6,13 @@ declare(strict_types=1);
  * Migration Definition.
  */
 
-use Migrations\AbstractMigration;
-use Phinx\Db\Adapter\MysqlAdapter;
 use Cake\Core\Configure;
+use Migrations\BaseMigration;
 
 /**
  * Initial Schema
  */
-class Fr3nch13StatsInitial extends AbstractMigration
+class Fr3nch13StatsInitial extends BaseMigration
 {
     use \Fr3nch13\Stats\Migrations\QrMigrationTrait;
     /**
@@ -33,13 +32,13 @@ class Fr3nch13StatsInitial extends AbstractMigration
         $table->addColumn('okey', 'string')
             ->addIndex('okey');
         $table->addColumn('name', 'string');
-        $table->addColumn('description', 'text');
+        $table->addColumn('description', 'text', ['null' => true]);
         $table->addColumn('created', 'datetime');
-        $table->addColumn('modified', 'datetime');
+        $table->addColumn('modified', 'datetime', ['null' => true]);
         $table->addColumn('last_updated', 'datetime');
         $table->addColumn('active', 'boolean', ['default' => true])
             ->addIndex('active');
-        $table->addColumn('color', 'string');
+        $table->addColumn('color', 'string', ['null' => true]);
         $table->create();
 
         $this->io->out(__('Creating table: {0}', ['stats_counts']));

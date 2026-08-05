@@ -10,6 +10,7 @@ use Cake\Event\EventManager;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use Fr3nch13\Stats\Event\StatsListener;
+use Fr3nch13\Stats\Model\Entity\StatsObject;
 use Fr3nch13\Stats\Model\Table\StatsCountsTable;
 
 /**
@@ -99,11 +100,12 @@ class StatsListenerTest extends TestCase
             $i--;
         }
 
-        $this->eventManager->dispatch(new Event('Fr3nch13.Stats.count', $this, [
+        $event = $this->eventManager->dispatch(new Event('Fr3nch13.Stats.count', $this, [
             'key' => 'Stats.Tests.newkey',
         ]));
 
         $this->assertEventFired('Fr3nch13.Stats.count', $this->eventManager);
+        $this->assertInstanceOf(StatsObject::class, $event->getResult());
 
         // create object with counts
         $results = $this->StatsCounts->getObjectCounts('Stats.Tests.newkey', $now, 5, 'day');

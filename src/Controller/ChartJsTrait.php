@@ -35,7 +35,7 @@ trait ChartJsTrait
         ?int $range = null,
         ?string $timeperiod = null,
         ?string $title = null,
-        ?DateTime $start = null
+        ?DateTime $start = null,
     ): ?Response {
         // redirect so the frontend url is correct.
         if (!$range || !$timeperiod) {
